@@ -125,7 +125,7 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
 
         {/* Grid System */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {tools.map((tool) => {
+          {tools.map((tool, index) => {
             const IconComponent = tool.icon;
             const isActive = tool.badge === 'ACTIVE';
             const isCurrentlySelected = activeTool === tool.id;
@@ -133,13 +133,37 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
             return (
               <motion.div
                 key={tool.id}
-                whileHover={isActive ? { y: -3 } : {}}
-                transition={{ type: "tween", duration: 0.15 }}
-                className={`relative flex flex-col justify-between overflow-hidden rounded-2xl p-6.5 transition-colors duration-150 select-none ${
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: 0.5,
+                    delay: index * 0.08,
+                    ease: "easeOut"
+                  }
+                }}
+                viewport={{ once: true, margin: "-40px" }}
+                whileHover={
+                  isActive
+                    ? {
+                        y: -5,
+                        scale: 1.015,
+                        boxShadow:
+                          tool.color === 'purple'
+                            ? '0 12px 30px -10px rgba(124, 58, 237, 0.22)'
+                            : '0 12px 30px -10px rgba(6, 182, 212, 0.22)',
+                      }
+                    : {}
+                }
+                transition={{ type: "spring", stiffness: 450, damping: 25 }}
+                className={`relative flex flex-col justify-between overflow-hidden rounded-2xl p-6.5 border transition-all duration-200 select-none group ${
                   isCurrentlySelected
-                    ? 'border-cyan-400 bg-[#121A2F]'
+                    ? 'border-cyan-400 bg-[#121A2F] shadow-[0_0_20px_rgba(6, 182, 212, 0.15)]'
                     : isActive
-                    ? 'border-white/15 bg-[#121A2F] hover:border-purple-500/50 hover:bg-[#1A233A] cursor-pointer'
+                    ? tool.color === 'purple'
+                      ? 'border-white/15 bg-[#121A2F] hover:border-purple-500/50 hover:bg-[#161E33] cursor-pointer'
+                      : 'border-white/15 bg-[#121A2F] hover:border-cyan-500/50 hover:bg-[#111A30] cursor-pointer'
                     : 'border-white/5 bg-[#0E1326]/60 opacity-50'
                 } gpu-accel`}
                 onClick={() => handleCardClick(tool)}
@@ -150,11 +174,11 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
                   {/* Card Header Info */}
                   <div className="flex items-center justify-between">
                     <div
-                      className={`flex h-12 w-12 items-center justify-center rounded-xl transition-transform ${
+                      className={`flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200 ${
                         tool.color === 'purple'
-                          ? 'bg-purple-950/40 text-purple-400 border border-purple-500/10'
+                          ? 'bg-purple-950/40 text-purple-400 border border-purple-500/10 group-hover:scale-110 group-hover:bg-purple-950/70 group-hover:border-purple-500/30'
                           : tool.color === 'cyan'
-                          ? 'bg-cyan-950/40 text-cyan-400 border border-cyan-500/10'
+                          ? 'bg-cyan-950/40 text-cyan-400 border border-cyan-500/10 group-hover:scale-110 group-hover:bg-cyan-950/70 group-hover:border-cyan-500/30'
                           : 'bg-slate-900/40 text-[#94A3B8] border border-white/5'
                       }`}
                     >
@@ -175,7 +199,13 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
                   </div>
 
                   {/* Body Text */}
-                  <h3 className="mt-5 text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">
+                  <h3 className={`mt-5 text-lg font-bold text-white transition-colors duration-200 ${
+                    isActive
+                      ? tool.color === 'purple'
+                        ? 'group-hover:text-purple-400'
+                        : 'group-hover:text-cyan-400'
+                      : ''
+                  }`}>
                     {tool.title}
                   </h3>
                   <p className="mt-2 text-sm text-[#94A3B8] leading-relaxed font-light">
