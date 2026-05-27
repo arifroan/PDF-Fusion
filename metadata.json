@@ -1,0 +1,6 @@
+{
+  "name": "PDFusion",
+  "description": "A premium client-side web application incorporating direct browser-based PDF merging and JPG-to-PDF conversion with a high-contrast dark futuristic UI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
