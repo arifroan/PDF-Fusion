@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import FuturisticBackground from './components/FuturisticBackground';
 import Navbar from './components/Navbar';
+import ActiveProgressBar from './components/ActiveProgressBar';
 import Hero from './components/Hero';
 import ToolGrid from './components/ToolGrid';
 import MergeTool from './components/MergeTool';
@@ -39,6 +40,9 @@ export default function App() {
 
       {/* Global Navbar */}
       <Navbar onSelectTool={handleSelectTool} activeTool={activeTool} />
+
+      {/* Global Sandboxed Processing & Loading Progress Tracker */}
+      <ActiveProgressBar />
 
       {/* Hero presentation with quick targets */}
       {activeTool === 'all' && <Hero onSelectTool={handleSelectTool} />}

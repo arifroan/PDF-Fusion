@@ -35,18 +35,18 @@ html {
 /* Keyframes for futuristic glow effect transitions */
 @keyframes pulseGlow {
   0%, 100% {
-    opacity: 0.3;
-    filter: drop-shadow(0 0 15px rgba(124, 58, 237, 0.4));
+    opacity: 0.4;
+    border-color: rgba(124, 58, 237, 0.3);
   }
   50% {
-    opacity: 0.6;
-    filter: drop-shadow(0 0 35px rgba(6, 182, 212, 0.6));
+    opacity: 0.8;
+    border-color: rgba(6, 182, 212, 0.6);
   }
 }
 
 @keyframes laserHorizontal {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 @keyframes gridMovement {
@@ -54,10 +54,18 @@ html {
   100% { background-position: 40px 40px; }
 }
 
+/* Hardware GPU acceleration triggers */
+.gpu-accel {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
 /* Premium gradient borders */
 .animated-gradient-border {
   position: relative;
-  background: rgba(18, 26, 47, 0.7);
+  background: rgba(18, 26, 47, 0.85);
   background-clip: padding-box;
   border: 1px solid transparent;
 }
@@ -69,16 +77,16 @@ html {
   background: linear-gradient(to right, #7C3AED, #06B6D4);
   border-radius: inherit;
   z-index: -1;
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
 }
 
 .animated-gradient-border:hover::after {
-  opacity: 1;
+  opacity: 0.9;
 }
 
 .cyber-glow-active {
-  animation: pulseGlow 4s infinite ease-in-out;
+  animation: pulseGlow 5s infinite ease-in-out;
 }
 
 .laser-line {
@@ -94,7 +102,7 @@ html {
   bottom: 0;
   left: 0;
   background: linear-gradient(90deg, transparent, #06B6D4, #7C3AED, transparent);
-  animation: laserHorizontal 3s infinite linear;
+  animation: laserHorizontal 4s infinite linear;
 }
 
 /* Smooth spin for slow spin CPU graphics */

@@ -130,13 +130,13 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
                 key={tool.id}
                 whileHover={isActive ? { y: -6, scale: 1.02 } : {}}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className={`relative flex flex-col justify-between overflow-hidden rounded-2xl p-6.5 backdrop-blur-xl transition-all duration-300 select-none ${
+                className={`relative flex flex-col justify-between overflow-hidden rounded-2xl p-6.5 md:backdrop-blur-xl transition-all duration-300 select-none ${
                   isCurrentlySelected
-                    ? 'border-cyan-400/80 bg-[#121A2F]/80 shadow-[0_0_30px_rgba(6,182,212,0.2)]'
+                    ? 'border-cyan-400/80 bg-[#121A2F]/95 md:bg-[#121A2F]/80 shadow-[0_0_30px_rgba(6,182,212,0.2)]'
                     : isActive
-                    ? 'border-white/5 bg-white/[0.03] hover:border-purple-500/30 hover:bg-white/[0.06] cursor-pointer'
-                    : 'border-white/[0.02] bg-[#0E1326]/40 opacity-50'
-                }`}
+                    ? 'border-white/5 bg-[#121A2F]/95 md:bg-white/[0.03] hover:border-purple-500/30 hover:bg-white/[0.06] cursor-pointer'
+                    : 'border-white/[0.02] bg-[#0E1326]/60 md:bg-[#0E1326]/40 opacity-50'
+                } gpu-accel`}
                 onClick={() => handleCardClick(tool)}
               >
                 {/* Visual Glow Effect */}

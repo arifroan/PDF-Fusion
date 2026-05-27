@@ -60,8 +60,20 @@ export default function MergeTool() {
     // Append to list first
     setFiles((prev) => [...prev, ...itemsArray]);
 
+    window.dispatchEvent(new CustomEvent('pdf-progress', {
+      detail: { active: true, progress: 15, status: `Analyzing PDF stream headers...`, type: 'analyze' }
+    }));
+
     // Inspect metadata (like page count) in background using pdf-lib
+    let processed = 0;
     for (const item of itemsArray) {
+      processed++;
+      const currentProgress = 15 + Math.floor((processed / itemsArray.length) * 85);
+      
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: true, progress: currentProgress, status: `Parsing page maps: ${item.name}`, type: 'analyze' }
+      }));
+
       try {
         const fileBuffer = await item.file.arrayBuffer();
         const pdfDoc = await PDFDocument.load(fileBuffer, { 
@@ -87,6 +99,12 @@ export default function MergeTool() {
         );
       }
     }
+
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: false, progress: 100, status: 'Memory sandbox synced', type: null }
+      }));
+    }, 1000);
   };
 
   // Handle standard manual pick
@@ -181,11 +199,21 @@ export default function MergeTool() {
     setAlert({ type: null, message: '' });
 
     try {
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: true, progress: 10, status: 'Allocating sandbox document structures...', type: 'merge' }
+      }));
+
       // 1. Create a new PDF document object
       const mergedPdf = await PDFDocument.create();
 
       // 2. Loop through selected PDFs sequentially in current user-sorted order
+      let fileIdx = 0;
       for (const item of activeFiles) {
+        const filePct = 15 + Math.floor((fileIdx / activeFiles.length) * 65);
+        window.dispatchEvent(new CustomEvent('pdf-progress', {
+          detail: { active: true, progress: filePct, status: `Extracting pages from: ${item.name}...`, type: 'merge' }
+        }));
+
         const fileBytes = await item.file.arrayBuffer();
         const srcDoc = await PDFDocument.load(fileBytes);
         
@@ -195,10 +223,19 @@ export default function MergeTool() {
         
         // Insert inside merged PDF
         copiedPages.forEach((page) => mergedPdf.addPage(page));
+        fileIdx++;
       }
+
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: true, progress: 85, status: 'Assembling aligned document page trees...', type: 'merge' }
+      }));
 
       // 3. Save into a local array representation
       const mergedPdfBytes = await mergedPdf.save();
+
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: true, progress: 95, status: 'Formatting output binary BLOB...', type: 'merge' }
+      }));
 
       // 4. Generate local blob and trigger standard download
       const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
@@ -210,6 +247,10 @@ export default function MergeTool() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: true, progress: 100, status: 'Download stream successfully dispatched!', type: 'merge' }
+      }));
 
       setAlert({
         type: 'success',
@@ -223,15 +264,20 @@ export default function MergeTool() {
       });
     } finally {
       setIsProcessing(false);
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('pdf-progress', {
+          detail: { active: false, progress: 0, status: '', type: null }
+        }));
+      }, 1500);
     }
   };
 
   return (
     <section id="merge-tool-section" className="py-12 relative scroll-mt-24">
-      {/* Dynamic Ambient Background Spark behind the sandbox */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+      {/* Dynamic Ambient Background Spark behind the sandbox - hidden on mobile */}
+      <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
 
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#121A2F]/75 p-6 sm:p-8 backdrop-blur-3xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] relative overflow-hidden">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#121A2F]/95 md:bg-[#121A2F]/75 p-6 sm:p-8 md:backdrop-blur-3xl shadow-[0_15px_40px_rgba(0,0,0,0.5)] relative overflow-hidden gpu-accel">
         {/* Shimmer boundary accent */}
         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
 
@@ -318,7 +364,7 @@ export default function MergeTool() {
               <motion.div 
                 animate={{ y: ['0%', '100%', '0%'] }}
                 transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
-                className="w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_10px_#06B6D4]"
+                className="w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_10px_#06B6D4] gpu-accel"
               />
             </div>
           )}

@@ -168,6 +168,10 @@ export default function JpgToPdfTool() {
     setAlert({ type: null, message: '' });
 
     try {
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: true, progress: 10, status: 'Initializing vector layout workspace...', type: 'convert' }
+      }));
+
       // 1. Instantiating a new PDF Doc
       const pdfDoc = await PDFDocument.create();
 
@@ -190,7 +194,14 @@ export default function JpgToPdfTool() {
       const selectedMargin = marginValues[config.margin];
 
       // Sequential compilation
+      let imgIdx = 0;
       for (const item of images) {
+        imgIdx++;
+        const currentPct = 10 + Math.floor((imgIdx / images.length) * 75);
+        window.dispatchEvent(new CustomEvent('pdf-progress', {
+          detail: { active: true, progress: currentPct, status: `Embedding: ${item.name} (Image ${imgIdx}/${images.length})...`, type: 'convert' }
+        }));
+
         const fileBytes = await item.file.arrayBuffer();
         let embeddedImage;
         const lowercaseName = item.name.toLowerCase();
@@ -274,8 +285,17 @@ export default function JpgToPdfTool() {
         });
       }
 
-      // 3. Serialize and trigger down load
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: true, progress: 90, status: 'Finalizing PDF structural mapping...', type: 'convert' }
+      }));
+
+      // 3. Serialize and trigger download
       const finalPdfBytes = await pdfDoc.save();
+
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: true, progress: 96, status: 'Packaging assets into memory stream BLOB...', type: 'convert' }
+      }));
+
       const compiledBlob = new Blob([finalPdfBytes], { type: 'application/pdf' });
       const downloadUrl = URL.createObjectURL(compiledBlob);
 
@@ -285,6 +305,10 @@ export default function JpgToPdfTool() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      window.dispatchEvent(new CustomEvent('pdf-progress', {
+        detail: { active: true, progress: 100, status: 'Album synthesized and dispatched successfully!', type: 'convert' }
+      }));
 
       setAlert({
         type: 'success',
@@ -298,15 +322,20 @@ export default function JpgToPdfTool() {
       });
     } finally {
       setIsProcessing(false);
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('pdf-progress', {
+          detail: { active: false, progress: 0, status: '', type: null }
+        }));
+      }, 1500);
     }
   };
 
   return (
     <section id="jpg-pdf-tool-section" className="py-12 relative scroll-mt-24">
-      {/* Decorative center halo light spark */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+      {/* Decorative center halo light spark - hidden on mobile */}
+      <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
 
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#121A2F]/75 p-6 sm:p-8 backdrop-blur-3xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] relative overflow-hidden">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#121A2F]/95 md:bg-[#121A2F]/75 p-6 sm:p-8 md:backdrop-blur-3xl shadow-[0_15px_40px_rgba(0,0,0,0.5)] relative overflow-hidden gpu-accel">
         {/* Shimmer cyan line accent */}
         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
 
@@ -468,7 +497,7 @@ export default function JpgToPdfTool() {
               <motion.div 
                 animate={{ y: ['0%', '100%', '0%'] }}
                 transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
-                className="w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_10px_#06B6D4]"
+                className="w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_10px_#06B6D4] gpu-accel"
               />
             </div>
           )}

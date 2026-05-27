@@ -22,7 +22,7 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#0B1020]/80 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#0B1020]/95 md:backdrop-blur-xl md:bg-[#0B1020]/80">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo Brand */}
@@ -104,7 +104,7 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden border-b border-white/5 bg-[#0B1020]/95 backdrop-blur-2xl">
+        <div className="md:hidden border-b border-white/5 bg-[#0A0E1A] gpu-accel">
           <div className="space-y-1 px-4 py-4">
             <button
               onClick={() => handleNavClick('all')}
