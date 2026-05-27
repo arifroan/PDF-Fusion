@@ -6,114 +6,47 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Custom scrollbar utility for the sandboxed file lists */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Smooth scrolling bounds */
+/* Smooth scrolling bounds and modern solid dark palette */
 html {
   scroll-behavior: smooth;
-  background-color: #0B1020;
+  background-color: #07080F;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Keyframes for futuristic glow effect transitions */
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.4;
-    border-color: rgba(124, 58, 237, 0.3);
-  }
-  50% {
-    opacity: 0.8;
-    border-color: rgba(6, 182, 212, 0.6);
-  }
-}
-
-@keyframes laserHorizontal {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-@keyframes gridMovement {
-  0% { background-position: 0 0; }
-  100% { background-position: 40px 40px; }
-}
-
-/* Hardware GPU acceleration triggers */
+/* Hardware GPU acceleration triggers of essential UI components */
 .gpu-accel {
   transform: translateZ(0);
   backface-visibility: hidden;
-  perspective: 1000px;
   will-change: transform, opacity;
 }
 
-/* Premium gradient borders */
+/* Premium micro borders inspired by Linear/Vercel (replacing heavy glows) */
 .animated-gradient-border {
   position: relative;
-  background: rgba(18, 26, 47, 0.85);
-  background-clip: padding-box;
-  border: 1px solid transparent;
+  background: #0D111C;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.animated-gradient-border::after {
-  content: '';
-  position: absolute;
-  top: -1px; bottom: -1px; left: -1px; right: -1px;
-  background: linear-gradient(to right, #7C3AED, #06B6D4);
-  border-radius: inherit;
-  z-index: -1;
-  opacity: 0.5;
-  transition: opacity 0.2s ease;
-}
-
-.animated-gradient-border:hover::after {
-  opacity: 0.9;
+.animated-gradient-border:hover {
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .cyber-glow-active {
-  animation: pulseGlow 5s infinite ease-in-out;
+  border-color: rgba(6, 182, 212, 0.6) !important;
 }
 
-.laser-line {
-  position: relative;
-  overflow: hidden;
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
-.laser-line::before {
-  content: '';
-  position: absolute;
-  height: 1px;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  background: linear-gradient(90deg, transparent, #06B6D4, #7C3AED, transparent);
-  animation: laserHorizontal 4s infinite linear;
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Smooth spin for slow spin CPU graphics */
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
 }
-.duration-3000 {
-  animation-duration: 3000ms;
-}
+

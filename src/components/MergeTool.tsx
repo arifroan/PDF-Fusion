@@ -274,10 +274,7 @@ export default function MergeTool() {
 
   return (
     <section id="merge-tool-section" className="py-12 relative scroll-mt-24">
-      {/* Dynamic Ambient Background Spark behind the sandbox - hidden on mobile */}
-      <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
-
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#121A2F]/95 md:bg-[#121A2F]/75 p-6 sm:p-8 md:backdrop-blur-3xl shadow-[0_15px_40px_rgba(0,0,0,0.5)] relative overflow-hidden gpu-accel">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#0D111C] p-6 sm:p-8 relative overflow-hidden gpu-accel">
         {/* Shimmer boundary accent */}
         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
 

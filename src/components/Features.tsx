@@ -50,10 +50,8 @@ export default function Features() {
             return (
               <div
                 key={index}
-                className="group relative rounded-2xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-md hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300"
+                className="group relative rounded-2xl border border-white/10 bg-[#0F1424] p-6 transition-colors duration-150"
               >
-                {/* Accent Blob */}
-                <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-indigo-500/5 blur-2xl group-hover:bg-indigo-500/10 transition-all duration-300" />
                 
                 <div className="flex items-start gap-4">
                   <div className={`p-3 rounded-xl border shrink-0 ${item.accent}`}>

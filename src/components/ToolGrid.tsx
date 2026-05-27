@@ -107,9 +107,9 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
           <div className="flex gap-2 justify-center md:justify-start">
             <button
               onClick={() => onSelectTool('all')}
-              className={`rounded-xl px-5 py-2.5 text-xs font-semibold font-mono tracking-wide transition-all duration-300 border backdrop-blur-md cursor-pointer ${
+              className={`rounded-xl px-5 py-2.5 text-xs font-semibold font-mono tracking-wide transition-colors duration-150 border cursor-pointer ${
                 activeTool === 'all'
-                  ? 'bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border-cyan-500/40 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.2)]'
+                  ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-300'
                   : 'bg-white/5 border-white/5 text-[#94A3B8] hover:text-white hover:border-white/10'
               }`}
             >
@@ -128,25 +128,18 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
             return (
               <motion.div
                 key={tool.id}
-                whileHover={isActive ? { y: -6, scale: 1.02 } : {}}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className={`relative flex flex-col justify-between overflow-hidden rounded-2xl p-6.5 md:backdrop-blur-xl transition-all duration-300 select-none ${
+                whileHover={isActive ? { y: -3 } : {}}
+                transition={{ type: "tween", duration: 0.15 }}
+                className={`relative flex flex-col justify-between overflow-hidden rounded-2xl p-6.5 transition-colors duration-150 select-none ${
                   isCurrentlySelected
-                    ? 'border-cyan-400/80 bg-[#121A2F]/95 md:bg-[#121A2F]/80 shadow-[0_0_30px_rgba(6,182,212,0.2)]'
+                    ? 'border-cyan-400 bg-[#121A2F]'
                     : isActive
-                    ? 'border-white/5 bg-[#121A2F]/95 md:bg-white/[0.03] hover:border-purple-500/30 hover:bg-white/[0.06] cursor-pointer'
-                    : 'border-white/[0.02] bg-[#0E1326]/60 md:bg-[#0E1326]/40 opacity-50'
+                    ? 'border-white/15 bg-[#121A2F] hover:border-purple-500/50 hover:bg-[#1A233A] cursor-pointer'
+                    : 'border-white/5 bg-[#0E1326]/60 opacity-50'
                 } gpu-accel`}
                 onClick={() => handleCardClick(tool)}
               >
-                {/* Visual Glow Effect */}
-                {isActive && (
-                  <div
-                    className={`absolute -top-12 -right-12 h-28 w-28 rounded-full blur-[45px] opacity-25 pointer-events-none transition-all duration-300 ${
-                      tool.color === 'purple' ? 'bg-purple-500' : 'bg-cyan-500'
-                    }`}
-                  />
-                )}
+
 
                 <div>
                   {/* Card Header Info */}
