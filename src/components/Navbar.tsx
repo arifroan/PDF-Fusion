@@ -64,6 +64,22 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
               JPG to PDF
             </button>
             <button
+              onClick={() => handleNavClick('split')}
+              className={`text-sm font-medium transition-colors duration-150 hover:text-purple-400 ${
+                activeTool === 'split' ? 'text-purple-400' : 'text-[#94A3B8]'
+              }`}
+            >
+              Split PDF
+            </button>
+            <button
+              onClick={() => handleNavClick('pdf-to-jpg')}
+              className={`text-sm font-medium transition-colors duration-150 hover:text-cyan-400 ${
+                activeTool === 'pdf-to-jpg' ? 'text-cyan-400' : 'text-[#94A3B8]'
+              }`}
+            >
+              PDF to Image
+            </button>
+            <button
               onClick={() => handleNavClick('compress')}
               className={`text-sm font-medium transition-colors duration-150 hover:text-emerald-400 ${
                 activeTool === 'compress' ? 'text-emerald-400' : 'text-[#94A3B8]'
@@ -130,6 +146,18 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
               className="block w-full text-left rounded-lg px-3 py-2.5 text-base font-medium text-cyan-400 hover:bg-white/5"
             >
               Convert JPG to PDF
+            </button>
+            <button
+              onClick={() => handleNavClick('split')}
+              className="block w-full text-left rounded-lg px-3 py-2.5 text-base font-medium text-purple-400 hover:bg-white/5"
+            >
+              Split PDF
+            </button>
+            <button
+              onClick={() => handleNavClick('pdf-to-jpg')}
+              className="block w-full text-left rounded-lg px-3 py-2.5 text-base font-medium text-cyan-400 hover:bg-white/5"
+            >
+              PDF to Image Export
             </button>
             <button
               onClick={() => handleNavClick('compress')}

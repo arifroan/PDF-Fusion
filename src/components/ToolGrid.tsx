@@ -42,10 +42,10 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
       id: 'split',
       title: 'Split PDF Structure',
       description: 'Deconstruct a PDF into individual files page-by-page or export pre-selected segments.',
-      badge: 'COMING SOON',
+      badge: 'ACTIVE',
       icon: Scissors,
-      color: 'slate',
-      latency: 'v2 Core Queue',
+      color: 'purple',
+      latency: 'Split Splicer',
     },
     {
       id: 'compress',
@@ -60,10 +60,10 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
       id: 'pdf-to-jpg',
       title: 'PDF to Image Export',
       description: 'Extract raw vector and raster pages from any PDF document to crisp image segments.',
-      badge: 'COMING SOON',
+      badge: 'ACTIVE',
       icon: FileImage,
-      color: 'slate',
-      latency: 'v2 Core Queue',
+      color: 'cyan',
+      latency: 'Dual-Canvas GPU',
     },
     {
       id: 'watermark',
@@ -85,7 +85,9 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
       const sectionId = 
         tool.id === 'merge' ? 'merge-tool-section' : 
         tool.id === 'jpg-to-pdf' ? 'jpg-pdf-tool-section' : 
-        'compress-tool-section';
+        tool.id === 'split' ? 'split-tool-section' :
+        tool.id === 'compress' ? 'compress-tool-section' :
+        'pdf-to-jpg-tool-section';
       const el = document.getElementById(sectionId);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });

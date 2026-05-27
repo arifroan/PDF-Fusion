@@ -8,11 +8,13 @@ import ToolGrid from './components/ToolGrid';
 import MergeTool from './components/MergeTool';
 import JpgToPdfTool from './components/JpgToPdfTool';
 import CompressTool from './components/CompressTool';
+import SplitTool from './components/SplitTool';
+import PdfToJpgTool from './components/PdfToJpgTool';
 import Features from './components/Features';
 import Footer from './components/Footer';
 import CinematicIntro from './components/CinematicIntro';
 import { ToolId } from './types';
-import { Sparkles, ArrowLeft, History, Cpu, FileCheck, Minimize2 } from 'lucide-react';
+import { Sparkles, ArrowLeft, History, Cpu, FileCheck, Minimize2, Scissors, FileImage } from 'lucide-react';
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(() => {
@@ -32,7 +34,9 @@ export default function App() {
         const targetId = 
           tool === 'merge' ? 'merge-tool-section' : 
           tool === 'jpg-to-pdf' ? 'jpg-pdf-tool-section' : 
-          'compress-tool-section';
+          tool === 'split' ? 'split-tool-section' :
+          tool === 'compress' ? 'compress-tool-section' :
+          'pdf-to-jpg-tool-section';
         const element = document.getElementById(targetId);
         element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
@@ -96,6 +100,10 @@ export default function App() {
                         ? 'Merge Document Stream Mode' 
                         : activeTool === 'jpg-to-pdf' 
                         ? 'JPG to PDF Synthesiser Mode'
+                        : activeTool === 'split'
+                        ? 'Split PDF Structure Mode'
+                        : activeTool === 'pdf-to-jpg'
+                        ? 'PDF to Image Export Mode'
                         : 'Optimize & Compress Mode'}
                     </h2>
                   </div>
@@ -148,6 +156,28 @@ export default function App() {
                   {/* Divider title */}
                   <div className="relative flex py-5 items-center">
                     <div className="flex-grow border-t border-white/5"></div>
+                    <span className="flex-shrink mx-4 text-xs font-mono text-purple-400 uppercase tracking-widest flex items-center gap-2">
+                      <Scissors className="h-3 w-3" /> Live Terminal: Split Document
+                    </span>
+                    <div className="flex-grow border-t border-white/5"></div>
+                  </div>
+
+                  <SplitTool />
+
+                  {/* Divider title */}
+                  <div className="relative flex py-5 items-center">
+                    <div className="flex-grow border-t border-white/5"></div>
+                    <span className="flex-shrink mx-4 text-xs font-mono text-cyan-400 uppercase tracking-widest flex items-center gap-2">
+                      <FileImage className="h-3 w-3" /> Live Terminal: PDF to Image Export
+                    </span>
+                    <div className="flex-grow border-t border-white/5"></div>
+                  </div>
+
+                  <PdfToJpgTool />
+
+                  {/* Divider title */}
+                  <div className="relative flex py-5 items-center">
+                    <div className="flex-grow border-t border-white/5"></div>
                     <span className="flex-shrink mx-4 text-xs font-mono text-emerald-400 uppercase tracking-widest flex items-center gap-2">
                       <Minimize2 className="h-3 w-3" /> Live Terminal: PDF Optimize
                     </span>
@@ -161,6 +191,10 @@ export default function App() {
               <MergeTool />
             ) : activeTool === 'jpg-to-pdf' ? (
               <JpgToPdfTool />
+            ) : activeTool === 'split' ? (
+              <SplitTool />
+            ) : activeTool === 'pdf-to-jpg' ? (
+              <PdfToJpgTool />
             ) : (
               <CompressTool />
             )}
