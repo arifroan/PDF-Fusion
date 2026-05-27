@@ -7,12 +7,20 @@ import Hero from './components/Hero';
 import ToolGrid from './components/ToolGrid';
 import MergeTool from './components/MergeTool';
 import JpgToPdfTool from './components/JpgToPdfTool';
+import CompressTool from './components/CompressTool';
 import Features from './components/Features';
 import Footer from './components/Footer';
+import CinematicIntro from './components/CinematicIntro';
 import { ToolId } from './types';
-import { Sparkles, ArrowLeft, History, Cpu, FileCheck } from 'lucide-react';
+import { Sparkles, ArrowLeft, History, Cpu, FileCheck, Minimize2 } from 'lucide-react';
 
 export default function App() {
+  const [showIntro, setShowIntro] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('pdfusion-intro-shown');
+    }
+    return true;
+  });
   const [activeTool, setActiveTool] = useState<ToolId>('all');
 
   const handleSelectTool = (tool: ToolId) => {
@@ -21,7 +29,10 @@ export default function App() {
     // If focusing a specific tool, smoothly scroll to the focused section after state renders
     if (tool !== 'all') {
       setTimeout(() => {
-        const targetId = tool === 'merge' ? 'merge-tool-section' : 'jpg-pdf-tool-section';
+        const targetId = 
+          tool === 'merge' ? 'merge-tool-section' : 
+          tool === 'jpg-to-pdf' ? 'jpg-pdf-tool-section' : 
+          'compress-tool-section';
         const element = document.getElementById(targetId);
         element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
@@ -33,8 +44,16 @@ export default function App() {
     }
   };
 
+  const handleIntroComplete = () => {
+    sessionStorage.setItem('pdfusion-intro-shown', 'true');
+    setShowIntro(false);
+  };
+
   return (
     <div id="app-root-container" className="min-h-screen text-white font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+      {/* Cinematic Opening Intro on system boot sequence */}
+      {showIntro && <CinematicIntro onComplete={handleIntroComplete} />}
+
       {/* Dynamic Futuristic Canvas Star background */}
       <FuturisticBackground />
 
@@ -73,7 +92,11 @@ export default function App() {
                   <div>
                     <span className="text-xs font-mono text-cyan-400">Quantum Node Controller</span>
                     <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-                      {activeTool === 'merge' ? 'Merge Document Stream Mode' : 'JPG to PDF Synthesiser Mode'}
+                      {activeTool === 'merge' 
+                        ? 'Merge Document Stream Mode' 
+                        : activeTool === 'jpg-to-pdf' 
+                        ? 'JPG to PDF Synthesiser Mode'
+                        : 'Optimize & Compress Mode'}
                     </h2>
                   </div>
                 </div>
@@ -121,12 +144,25 @@ export default function App() {
                   </div>
 
                   <JpgToPdfTool />
+
+                  {/* Divider title */}
+                  <div className="relative flex py-5 items-center">
+                    <div className="flex-grow border-t border-white/5"></div>
+                    <span className="flex-shrink mx-4 text-xs font-mono text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                      <Minimize2 className="h-3 w-3" /> Live Terminal: PDF Optimize
+                    </span>
+                    <div className="flex-grow border-t border-white/5"></div>
+                  </div>
+
+                  <CompressTool />
                 </div>
               </>
             ) : activeTool === 'merge' ? (
               <MergeTool />
-            ) : (
+            ) : activeTool === 'jpg-to-pdf' ? (
               <JpgToPdfTool />
+            ) : (
+              <CompressTool />
             )}
           </motion.div>
         </AnimatePresence>

@@ -63,6 +63,14 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
             >
               JPG to PDF
             </button>
+            <button
+              onClick={() => handleNavClick('compress')}
+              className={`text-sm font-medium transition-colors duration-150 hover:text-emerald-400 ${
+                activeTool === 'compress' ? 'text-emerald-400' : 'text-[#94A3B8]'
+              }`}
+            >
+              Compress PDF
+            </button>
             <a
               href="#features-section"
               className="text-sm font-medium text-[#94A3B8] transition-colors duration-150 hover:text-white"
@@ -122,6 +130,12 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
               className="block w-full text-left rounded-lg px-3 py-2.5 text-base font-medium text-cyan-400 hover:bg-white/5"
             >
               Convert JPG to PDF
+            </button>
+            <button
+              onClick={() => handleNavClick('compress')}
+              className="block w-full text-left rounded-lg px-3 py-2.5 text-base font-medium text-emerald-400 hover:bg-white/5"
+            >
+              Compress PDF
             </button>
             <a
               href="#features-section"

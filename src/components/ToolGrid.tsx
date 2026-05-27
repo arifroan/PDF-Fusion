@@ -51,10 +51,10 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
       id: 'compress',
       title: 'Compress PDF Mass',
       description: 'Shrink file sizes instantly using client-side downsampling algorithms.',
-      badge: 'COMING SOON',
+      badge: 'ACTIVE',
       icon: Minimize2,
-      color: 'slate',
-      latency: 'v2 Core Queue',
+      color: 'cyan',
+      latency: 'RAM Optimizer',
     },
     {
       id: 'pdf-to-jpg',
@@ -82,7 +82,10 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
     
     // Auto scroll directly to the tool with offset
     setTimeout(() => {
-      const sectionId = tool.id === 'merge' ? 'merge-tool-section' : 'jpg-pdf-tool-section';
+      const sectionId = 
+        tool.id === 'merge' ? 'merge-tool-section' : 
+        tool.id === 'jpg-to-pdf' ? 'jpg-pdf-tool-section' : 
+        'compress-tool-section';
       const el = document.getElementById(sectionId);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
