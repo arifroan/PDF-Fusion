@@ -168,7 +168,6 @@ export default function MergeTool() {
 
   // CORE: Merging files client side
   const handleMergePdfStream = async () => {
-    // Requires at least 2 PDFs to merge
     const activeFiles = files.filter(f => f.status === 'success');
     if (activeFiles.length < 2) {
       setAlert({
@@ -228,19 +227,24 @@ export default function MergeTool() {
   };
 
   return (
-    <section id="merge-tool-section" className="py-12 relative scroll-mt-20">
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/5 bg-[#121A2F]/60 p-6 sm:p-8 backdrop-blur-2xl shadow-xl">
-        
+    <section id="merge-tool-section" className="py-12 relative scroll-mt-24">
+      {/* Dynamic Ambient Background Spark behind the sandbox */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+
+      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#121A2F]/75 p-6 sm:p-8 backdrop-blur-3xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] relative overflow-hidden">
+        {/* Shimmer boundary accent */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
+
         {/* Module Title */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-white/5 pb-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-              <Layers className="h-5 w-5" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-white/5 pb-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              <Layers className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white font-sans">Merge PDF Streams</h3>
-              <p className="text-xs text-[#94A3B8]">
-                Stitch pages in linear order safely. Complete isolation.
+              <h3 className="text-2xl font-black text-white font-sans tracking-tight">Merge PDF Streams</h3>
+              <p className="text-xs text-[#94A3B8] mt-0.5">
+                Stitch multiple documents sequentially. Executed 100% inside client-side RAM.
               </p>
             </div>
           </div>
@@ -249,50 +253,54 @@ export default function MergeTool() {
             <button
               onClick={handleReset}
               disabled={isProcessing}
-              className="px-3 py-1.5 self-start sm:self-center text-xs border border-white/10 hover:border-white/20 rounded-lg text-slate-300 transition-all cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 self-start sm:self-center text-xs border border-[#F43F5E]/30 text-rose-300 hover:bg-[#F43F5E]/10 rounded-xl transition-all cursor-pointer disabled:opacity-50 font-semibold"
             >
               Reset Stream
             </button>
           )}
         </div>
 
-        {/* Dynamic Warning Alerts container */}
-        <AnimatePresence>
+        {/* Dynamic Warning Alerts container with physical enter/exit */}
+        <AnimatePresence mode="popLayout">
           {alert.type && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className={`mb-6 p-4 rounded-xl flex items-start gap-3 border ${
+              initial={{ opacity: 0, y: -15, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.95 }}
+              className={`mb-8 p-4.5 rounded-2xl flex items-start gap-3.5 border shadow-lg ${
                 alert.type === 'success'
-                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'
-                  : 'bg-rose-500/10 border-rose-500/20 text-rose-300'
+                  ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
+                  : 'bg-rose-500/10 border-rose-500/25 text-rose-300'
               }`}
             >
-              {alert.type === 'success' ? (
-                <CheckCircle className="h-5 w-5 shrink-0" />
-              ) : (
-                <AlertTriangle className="h-5 w-5 shrink-0" />
-              )}
+              <div className="mt-0.5 shrink-0">
+                {alert.type === 'success' ? (
+                  <CheckCircle className="h-5 w-5 text-emerald-400" />
+                ) : (
+                  <AlertTriangle className="h-5 w-5 text-rose-400" />
+                )}
+              </div>
               <div className="text-sm">
-                <span className="font-semibold">{alert.type === 'success' ? 'Task Completed: ' : 'Attention Required: '}</span>
+                <span className="font-bold underline decoration-white/20 underline-offset-2 mr-1">
+                  {alert.type === 'success' ? 'Task Complete:' : 'System Alert:'}
+                </span>
                 {alert.message}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Upload Drag area */}
+        {/* Upload Drag area with vertical scanlines */}
         <div
           onDragEnter={handleDragEnter}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={handleSelectClick}
-          className={`relative cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-8 md:p-12 text-center transition-all duration-300 ${
+          className={`relative cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed rounded-3xl p-8 md:p-14 text-center transition-all duration-300 ${
             isDragging
-              ? 'border-cyan-400 bg-cyan-950/10 shadow-[0_0_20px_rgba(6,182,212,0.1)]'
-              : 'border-white/10 bg-white/[0.01] hover:border-purple-500/30 hover:bg-white/[0.03]'
+              ? 'border-cyan-400 bg-cyan-950/20 shadow-[0_0_30px_rgba(6,182,212,0.25)]'
+              : 'border-white/10 bg-white/[0.01] hover:border-purple-500/40 hover:bg-white/[0.03]'
           }`}
         >
           <input
@@ -304,143 +312,165 @@ export default function MergeTool() {
             className="hidden"
           />
 
-          <div className="absolute -inset-[1px] bg-gradient-to-r from-purple-500/10 via-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl -z-10" />
+          {/* Cyber scanner overlay lines during active drag-and-drop ops */}
+          {isDragging && (
+            <div className="absolute inset-0 pointer-events-none rounded-[22px] overflow-hidden">
+              <motion.div 
+                animate={{ y: ['0%', '100%', '0%'] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
+                className="w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_10px_#06B6D4]"
+              />
+            </div>
+          )}
 
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 border border-white/5 text-[#94A3B8] transition-colors group-hover:text-purple-400 group-hover:border-purple-500/30">
-            <Upload className="h-6 w-6 group-hover:scale-110 transition-transform" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-black/40 border border-white/10 text-[#94A3B8] transition-all group-hover:text-purple-400 group-hover:border-purple-500/40 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(124,58,237,0.15)]">
+            <Upload className="h-7 w-7" />
           </div>
 
-          <h4 className="mt-4 text-base font-bold text-white">
+          <h4 className="mt-5 text-lg font-bold text-white tracking-tight group-hover:text-cyan-300 transition-colors">
             Drag & drop PDF files to compile stream
           </h4>
-          <p className="mt-2 text-xs text-[#94A3B8]">
-            Or <span className="text-cyan-400 group-hover:underline">browse your folders</span> to select files (Supports multiple select)
+          <p className="mt-2 text-sm text-[#94A3B8]">
+            Or <span className="text-cyan-400 font-semibold group-hover:underline">browse files</span> instantly (Supports files of any layout scale)
           </p>
-          <span className="mt-3 text-[10px] uppercase font-mono tracking-wider text-slate-500 bg-white/5 py-1 px-2.5 rounded">
-            Maximum Limit: Unlimited
-          </span>
+          <div className="mt-4 flex items-center gap-2">
+            <span className="text-[10px] uppercase font-mono tracking-wider text-purple-300 bg-purple-950/40 border border-purple-500/20 py-1 px-3 rounded-md">
+              100% Client Isolation
+            </span>
+            <span className="text-[10px] uppercase font-mono tracking-wider text-cyan-300 bg-cyan-950/40 border border-cyan-500/20 py-1 px-3 rounded-md">
+              Unlimited size
+            </span>
+          </div>
         </div>
 
-        {/* Main List display */}
+        {/* Main List display with stagger-animations */}
         {files.length > 0 && (
-          <div className="mt-8 space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="mt-10 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/5 pb-2">
               <span className="text-xs font-mono tracking-wider text-[#94A3B8] uppercase">
-                Sequence Order ({files.length} active documents)
+                Sequence Order ({files.length} active items)
               </span>
               <span className="text-[10px] text-slate-500 font-mono">
-                Order top to bottom is output order
+                Linear stitching: top-most aligns as page 1
               </span>
             </div>
 
-            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-              {files.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`flex items-center justify-between border rounded-xl p-3.5 bg-white/[0.01] transition-colors ${
-                    item.status === 'error'
-                      ? 'border-rose-500/20 bg-rose-950/5'
-                      : item.status === 'processing'
-                      ? 'border-yellow-500/20'
-                      : 'border-white/5 hover:border-white/15'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-950/40 border border-purple-500/10 text-purple-400">
-                      <FileText className="h-5 w-5" />
-                    </div>
-                    
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-white truncate text-ellipsis">
-                          {item.name}
-                        </p>
-                        {item.status === 'success' && item.pageCount !== undefined && (
-                          <span className="shrink-0 text-[10px] font-mono font-medium text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-500/10">
-                            {item.pageCount} {item.pageCount === 1 ? 'page' : 'pages'}
-                          </span>
-                        )}
+            <div className="space-y-3 max-h-[420px] overflow-y-auto pr-2 custom-scrollbar">
+              <AnimatePresence initial={false}>
+                {files.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, scale: 0.98, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    className={`flex items-center justify-between border rounded-2xl p-4 bg-white/[0.01] transition-all ${
+                      item.status === 'error'
+                        ? 'border-rose-500/20 bg-rose-950/10'
+                        : item.status === 'processing'
+                        ? 'border-yellow-500/20 bg-yellow-950/5'
+                        : 'border-white/5 hover:border-white/15 hover:bg-white/[0.02]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4 min-w-0 flex-1">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-950/50 border border-purple-500/20 text-purple-400 shadow-inner">
+                        <FileText className="h-5 w-5" />
                       </div>
                       
-                      <div className="flex items-center gap-2 mt-1 text-xs text-[#94A3B8]">
-                        <span>{formatBytes(item.size)}</span>
-                        <span>•</span>
-                        {item.status === 'success' ? (
-                          <span className="text-emerald-400 flex items-center gap-1 text-[10px] font-mono">
-                            <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" /> Analyzed
-                          </span>
-                        ) : item.status === 'error' ? (
-                          <span className="text-rose-400 text-[10px] font-mono">
-                            {item.errorMessage || 'Invalid load'}
-                          </span>
-                        ) : (
-                          <span className="text-yellow-400 flex items-center gap-1 text-[10px] font-mono animate-pulse">
-                            <RefreshCw className="h-2 w-2 spin animate-spin" /> Verifying bytes
-                          </span>
-                        )}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">
+                            {item.name}
+                          </p>
+                          {item.status === 'success' && item.pageCount !== undefined && (
+                            <span className="shrink-0 text-[10px] font-mono font-black text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30">
+                              {item.pageCount} {item.pageCount === 1 ? 'PAGE' : 'PAGES'}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2 mt-1.5 text-xs text-[#94A3B8]">
+                          <span>{formatBytes(item.size)}</span>
+                          <span>•</span>
+                          {item.status === 'success' ? (
+                            <span className="text-emerald-400 flex items-center gap-1 text-[10px] font-mono font-bold">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Analyzed
+                            </span>
+                          ) : item.status === 'error' ? (
+                            <span className="text-rose-400 text-[10px] font-mono font-semibold">
+                              {item.errorMessage || 'Invalid load'}
+                            </span>
+                          ) : (
+                            <span className="text-yellow-400 flex items-center gap-1.5 text-[10px] font-mono animate-pulse">
+                              <RefreshCw className="h-3 w-3 animate-spin" /> Sandboxing memory...
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Move & Actions controls */}
-                  <div className="flex items-center gap-1.5 ml-3">
-                    {/* Move Up */}
-                    <button
-                      onClick={() => handleMoveUp(index)}
-                      disabled={index === 0}
-                      className="p-1.5 rounded-lg text-[#94A3B8] hover:text-white hover:bg-white/5 active:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition"
-                      title="Move Up"
-                    >
-                      <ArrowUp className="h-4 w-4" />
-                    </button>
-                    
-                    {/* Move Down */}
-                    <button
-                      onClick={() => handleMoveDown(index)}
-                      disabled={index === files.length - 1}
-                      className="p-1.5 rounded-lg text-[#94A3B8] hover:text-white hover:bg-white/5 active:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition"
-                      title="Move Down"
-                    >
-                      <ArrowDown className="h-4 w-4" />
-                    </button>
+                    {/* Move & Actions controls */}
+                    <div className="flex items-center gap-1 ml-3 bg-black/40 p-1 rounded-xl border border-white/5 shrink-0">
+                      {/* Move Up */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleMoveUp(index); }}
+                        disabled={index === 0}
+                        className="p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-white/5 active:bg-white/10 disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer"
+                        title="Move Up"
+                      >
+                        <ArrowUp className="h-4 w-4" />
+                      </button>
+                      
+                      {/* Move Down */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleMoveDown(index); }}
+                        disabled={index === files.length - 1}
+                        className="p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-white/5 active:bg-white/10 disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer"
+                        title="Move Down"
+                      >
+                        <ArrowDown className="h-4 w-4" />
+                      </button>
 
-                    <div className="h-5 w-[1px] bg-white/5 mx-1" />
+                      <div className="h-5 w-[1px] bg-white/10 mx-1" />
 
-                    {/* Delete item */}
-                    <button
-                      onClick={() => handleDeleteFile(item.id)}
-                      className="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 active:bg-rose-500/20 transition cursor-pointer"
-                      title="Delete from Stream"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                      {/* Delete item */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeleteFile(item.id); }}
+                        className="p-2 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 active:bg-rose-500/20 transition cursor-pointer"
+                        title="Delete from Stream"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
 
             {/* Execute trigger bar */}
-            <div className="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <span className="text-xs text-[#94A3B8]/80 text-center sm:text-left">
-                Ensure at least 2 files status are <span className="text-cyan-400 font-semibold">'Analyzed'</span> to enable structural merge.
+            <div className="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-5">
+              <span className="text-xs text-[#94A3B8]/80 text-center sm:text-left leading-relaxed">
+                Ensure at least 2 file structures are parsed in the stream above to trigger merging.
               </span>
 
               <button
                 onClick={handleMergePdfStream}
                 disabled={files.filter(f => f.status === 'success').length < 2 || isProcessing}
-                className="w-full sm:w-auto px-6 py-3 cursor-pointer rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold text-white tracking-wide transition-all select-none hover:shadow-[0_0_15px_rgba(124,58,237,0.4)] hover:brightness-110 active:scale-95 disabled:scale-100 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-2"
+                className="w-full sm:w-auto overflow-hidden rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 p-[1.5px] font-sans text-sm font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] active:scale-95 disabled:scale-100 disabled:opacity-30 disabled:pointer-events-none cursor-pointer flex justify-center items-center"
               >
-                {isProcessing ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 animate-spin text-purple-200" />
-                    Aligning Bytes...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4 text-cyan-300" />
-                    Merge Document Stream
-                  </>
-                )}
+                <span className="w-full h-full flex items-center justify-center gap-2 bg-[#0C1123]/95 hover:bg-transparent px-8 py-3.5 rounded-[15px] transition-colors duration-200">
+                  {isProcessing ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin text-cyan-300" />
+                      Aligning Bytes...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 text-cyan-300 animate-pulse" />
+                      Merge PDF Streams
+                    </>
+                  )}
+                </span>
               </button>
             </div>
           </div>

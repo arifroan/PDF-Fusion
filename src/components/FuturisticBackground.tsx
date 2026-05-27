@@ -1,6 +1,15 @@
 import { motion } from 'motion/react';
 
 export default function FuturisticBackground() {
+  const points = [
+    { top: '15%', left: '20%', delay: 0, size: 'w-1 h-1' },
+    { top: '80%', left: '15%', delay: 4, size: 'w-1.5 h-1.5' },
+    { top: '35%', left: '75%', delay: 2, size: 'w-1 h-1' },
+    { top: '70%', left: '85%', delay: 6, size: 'w-2 h-2' },
+    { top: '50%', left: '45%', delay: 1, size: 'w-1.5 h-1.5' },
+    { top: '25%', left: '60%', delay: 8, size: 'w-1 h-1' },
+  ];
+
   return (
     <div className="fixed inset-0 -z-50 overflow-hidden bg-[#0B1020]">
       {/* Ambient background glow highlights */}
@@ -15,7 +24,7 @@ export default function FuturisticBackground() {
           repeat: Infinity,
           ease: "linear",
         }}
-        className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-indigo-900/15 blur-[120px]"
+        className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-indigo-900/15 blur-[120px]"
       />
       <motion.div
         animate={{
@@ -28,7 +37,7 @@ export default function FuturisticBackground() {
           repeat: Infinity,
           ease: "linear",
         }}
-        className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[600px] h-[600px] rounded-full bg-cyan-950/20 blur-[130px]"
+        className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[620px] h-[620px] rounded-full bg-cyan-950/20 blur-[130px]"
       />
       <motion.div
         animate={{
@@ -40,8 +49,29 @@ export default function FuturisticBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-purple-950/10 blur-[150px]"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[450px] rounded-full bg-purple-950/10 blur-[150px]"
       />
+
+      {/* Cyber floating matrix sparks */}
+      {points.map((pt, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0.1, y: 30 }}
+          animate={{
+            opacity: [0.1, 0.8, 0.3, 0.8, 0.1],
+            y: [-25, 25, -25],
+            x: [-15, 15, -15],
+          }}
+          transition={{
+            duration: 10 + i * 2,
+            repeat: Infinity,
+            delay: pt.delay,
+            ease: "easeInOut",
+          }}
+          className={`absolute ${pt.size} rounded-full bg-cyan-400/50 shadow-[0_0_10px_rgba(6,182,212,0.8)]`}
+          style={{ top: pt.top, left: pt.left }}
+        />
+      ))}
 
       {/* Futuristic grid overlay */}
       <div 
@@ -66,3 +96,4 @@ export default function FuturisticBackground() {
     </div>
   );
 }
+

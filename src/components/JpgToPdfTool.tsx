@@ -2,7 +2,7 @@ import { useState, useRef, ChangeEvent, DragEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Upload, Image as ImageIcon, CheckCircle, AlertTriangle, Trash2, 
-  ArrowLeft, ArrowRight, Sparkles, RefreshCw, SlidersHorizontal, Eye
+  ArrowLeft, ArrowRight, Sparkles, RefreshCw, SlidersHorizontal
 } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
 import { ImageFileItem, ImageConversionConfig } from '../types';
@@ -193,26 +193,20 @@ export default function JpgToPdfTool() {
       for (const item of images) {
         const fileBytes = await item.file.arrayBuffer();
         let embeddedImage;
-        let isJpg = true;
-
         const lowercaseName = item.name.toLowerCase();
         const isPng = lowercaseName.endsWith('.png');
 
         if (isPng) {
           try {
             embeddedImage = await pdfDoc.embedPng(fileBytes);
-            isJpg = false;
           } catch {
-            // fallback if it was mislabeled
             embeddedImage = await pdfDoc.embedJpg(fileBytes);
           }
         } else {
           try {
             embeddedImage = await pdfDoc.embedJpg(fileBytes);
           } catch {
-            // fallback trigger if it is PNG in actual data structure
             embeddedImage = await pdfDoc.embedPng(fileBytes);
-            isJpg = false;
           }
         }
 
@@ -224,9 +218,7 @@ export default function JpgToPdfTool() {
         let pageHeight = 0;
 
         if (config.pageSize === 'FIT') {
-          // Fit page strictly to the original dimensions with standard orientation overrides if requested
           if (config.orientation === 'landscape' && imgHeight > imgWidth) {
-            // Rotate the aspect target
             pageWidth = imgHeight + (selectedMargin * 2);
             pageHeight = imgWidth + (selectedMargin * 2);
           } else if (config.orientation === 'portrait' && imgWidth > imgHeight) {
@@ -237,7 +229,6 @@ export default function JpgToPdfTool() {
             pageHeight = imgHeight + (selectedMargin * 2);
           }
         } else {
-          // Select predetermined frame sizes
           const baseFrame = standardSizes[config.pageSize];
           if (config.orientation === 'landscape') {
             pageWidth = baseFrame.height;
@@ -251,7 +242,7 @@ export default function JpgToPdfTool() {
         // Add a new slide sheet inside PDF Doc
         const page = pdfDoc.addPage([pageWidth, pageHeight]);
 
-        // Calculate available area inside the page constraints (subtracting margins)
+        // Calculate available area inside the page constraints
         const activeWidth = pageWidth - (selectedMargin * 2);
         const activeHeight = pageHeight - (selectedMargin * 2);
 
@@ -263,16 +254,14 @@ export default function JpgToPdfTool() {
         let drawHeight = activeHeight;
 
         if (imageRatio > cardRatio) {
-          // Limited by width
           drawWidth = activeWidth;
           drawHeight = activeWidth / imageRatio;
         } else {
-          // Limited by height
           drawHeight = activeHeight;
           drawWidth = activeHeight * imageRatio;
         }
 
-        // Recenter drawing offset calculation within the page limits
+        // Recenter drawing offset calculation
         const drawX = selectedMargin + ((activeWidth - drawWidth) / 2);
         const drawY = selectedMargin + ((activeHeight - drawHeight) / 2);
 
@@ -285,7 +274,7 @@ export default function JpgToPdfTool() {
         });
       }
 
-      // 3. Serialize and trigger the client-side downloader
+      // 3. Serialize and trigger down load
       const finalPdfBytes = await pdfDoc.save();
       const compiledBlob = new Blob([finalPdfBytes], { type: 'application/pdf' });
       const downloadUrl = URL.createObjectURL(compiledBlob);
@@ -313,18 +302,23 @@ export default function JpgToPdfTool() {
   };
 
   return (
-    <section id="jpg-pdf-tool-section" className="py-12 relative scroll-mt-20">
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/5 bg-[#121A2F]/60 p-6 sm:p-8 backdrop-blur-2xl shadow-xl">
-        
+    <section id="jpg-pdf-tool-section" className="py-12 relative scroll-mt-24">
+      {/* Decorative center halo light spark */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+
+      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#121A2F]/75 p-6 sm:p-8 backdrop-blur-3xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] relative overflow-hidden">
+        {/* Shimmer cyan line accent */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+
         {/* Module Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-white/5 pb-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-              <ImageIcon className="h-5 w-5" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-white/5 pb-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-md">
+              <ImageIcon className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white font-sans">JPG to PDF Synth</h3>
-              <p className="text-xs text-[#94A3B8]">
+              <h3 className="text-2xl font-black text-white font-sans tracking-tight">JPG to PDF Synth</h3>
+              <p className="text-xs text-[#94A3B8] mt-0.5">
                 Pack JPG, JPEG, or PNG images into an elegant vector bounding-box PDF instantly.
               </p>
             </div>
@@ -334,33 +328,37 @@ export default function JpgToPdfTool() {
             <button
               onClick={handleReset}
               disabled={isProcessing}
-              className="px-3 py-1.5 self-start sm:self-center text-xs border border-white/10 hover:border-white/20 rounded-lg text-slate-300 transition-all cursor-pointer disabled:opacity-50 font-sans"
+              className="px-4 py-2 self-start sm:self-center text-xs border border-[#F43F5E]/30 text-rose-300 hover:bg-[#F43F5E]/10 rounded-xl transition-all cursor-pointer disabled:opacity-50 font-semibold"
             >
               Reset Compiler
             </button>
           )}
         </div>
 
-        {/* Dynamic Alerts container */}
-        <AnimatePresence>
+        {/* Dynamic Warning Alerts container with physical active transitions */}
+        <AnimatePresence mode="popLayout">
           {alert.type && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className={`mb-6 p-4 rounded-xl flex items-start gap-3 border ${
+              initial={{ opacity: 0, y: -15, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.95 }}
+              className={`mb-8 p-4.5 rounded-2xl flex items-start gap-3.5 border shadow-lg ${
                 alert.type === 'success'
-                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'
-                  : 'bg-rose-500/10 border-rose-500/20 text-rose-300'
+                  ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
+                  : 'bg-rose-500/10 border-rose-500/25 text-rose-300'
               }`}
             >
-              {alert.type === 'success' ? (
-                <CheckCircle className="h-5 w-5 shrink-0" />
-              ) : (
-                <AlertTriangle className="h-5 w-5 shrink-0" />
-              )}
+              <div className="mt-0.5 shrink-0">
+                {alert.type === 'success' ? (
+                  <CheckCircle className="h-5 w-5 text-emerald-400" />
+                ) : (
+                  <AlertTriangle className="h-5 w-5 text-rose-400" />
+                )}
+              </div>
               <div className="text-sm">
-                <span className="font-semibold">{alert.type === 'success' ? 'Task Completed: ' : 'Error Warning: '}</span>
+                <span className="font-bold underline decoration-white/20 underline-offset-2 mr-1">
+                  {alert.type === 'success' ? 'Task Complete:' : 'System Alert:'}
+                </span>
                 {alert.message}
               </div>
             </motion.div>
@@ -368,7 +366,9 @@ export default function JpgToPdfTool() {
         </AnimatePresence>
 
         {/* Configuration sliders/menus panel */}
-        <div className="mb-8 rounded-2xl border border-white/5 bg-white/[0.01] p-5">
+        <div className="mb-8 rounded-2xl border border-white/5 bg-white/[0.015] p-5 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-24 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+          
           <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider mb-4">
             <SlidersHorizontal className="h-4 w-4" />
             <span>Digital Alignment Properties</span>
@@ -382,10 +382,10 @@ export default function JpgToPdfTool() {
                 <button
                   type="button"
                   onClick={() => setConfig(prev => ({ ...prev, orientation: 'portrait' }))}
-                  className={`rounded-lg text-xs font-medium transition cursor-pointer ${
+                  className={`rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
                     config.orientation === 'portrait'
-                      ? 'bg-[#7C3AED] text-white'
-                      : 'bg-white/5 text-[#94A3B8] hover:bg-white/10'
+                      ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
+                      : 'bg-[#121A2F]/40 border-white/5 text-[#94A3B8] hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   Portrait
@@ -393,10 +393,10 @@ export default function JpgToPdfTool() {
                 <button
                   type="button"
                   onClick={() => setConfig(prev => ({ ...prev, orientation: 'landscape' }))}
-                  className={`rounded-lg text-xs font-medium transition cursor-pointer ${
+                  className={`rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
                     config.orientation === 'landscape'
-                      ? 'bg-[#7C3AED] text-white'
-                      : 'bg-white/5 text-[#94A3B8] hover:bg-white/10'
+                      ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
+                      : 'bg-[#121A2F]/40 border-white/5 text-[#94A3B8] hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   Landscape
@@ -410,7 +410,7 @@ export default function JpgToPdfTool() {
               <select
                 value={config.pageSize}
                 onChange={(e) => setConfig(prev => ({ ...prev, pageSize: e.target.value as any }))}
-                className="h-10 rounded-lg bg-white/5 border border-white/5 text-[#94A3B8] px-3 text-xs outline-none focus:border-cyan-500/50 cursor-pointer"
+                className="h-10 rounded-xl bg-[#0B1020]/60 border border-white/10 text-slate-200 px-3 text-xs outline-none focus:border-cyan-500/40 cursor-pointer font-sans"
               >
                 <option value="FIT">Fit to Original Image Dimensions</option>
                 <option value="A4">Standard A4 Sheet Format</option>
@@ -427,10 +427,10 @@ export default function JpgToPdfTool() {
                     key={marginOpt}
                     type="button"
                     onClick={() => setConfig(prev => ({ ...prev, margin: marginOpt }))}
-                    className={`rounded-lg text-[10px] font-mono font-medium capitalize transition cursor-pointer ${
+                    className={`rounded-xl text-[10px] font-mono font-semibold capitalize transition cursor-pointer border ${
                       config.margin === marginOpt
-                        ? 'bg-cyan-500/25 border border-cyan-500/40 text-cyan-400'
-                        : 'bg-white/5 border border-transparent text-[#94A3B8] hover:bg-white/10'
+                        ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.1)]'
+                        : 'bg-[#121A2F]/40 border-white/5 text-[#94A3B8] hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     {marginOpt}
@@ -441,17 +441,17 @@ export default function JpgToPdfTool() {
           </div>
         </div>
 
-        {/* Upload Drop area style hook */}
+        {/* Upload Drop area with vertical moving scanner bar */}
         <div
           onDragEnter={handleDragEnter}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={handleSelectClick}
-          className={`relative cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-8 md:p-12 text-center transition-all duration-300 ${
+          className={`relative cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed rounded-3xl p-8 md:p-14 text-center transition-all duration-300 ${
             isDragging
-              ? 'border-cyan-400 bg-cyan-950/10 shadow-[0_0_20px_rgba(6,182,212,0.1)]'
-              : 'border-white/10 bg-white/[0.01] hover:border-cyan-500/30 hover:bg-white/[0.03]'
+              ? 'border-cyan-400 bg-cyan-950/20 shadow-[0_0_30px_rgba(6,182,212,0.25)]'
+              : 'border-white/10 bg-white/[0.01] hover:border-cyan-500/40 hover:bg-white/[0.03]'
           }`}
         >
           <input
@@ -463,27 +463,40 @@ export default function JpgToPdfTool() {
             className="hidden"
           />
 
-          <div className="absolute -inset-[1px] bg-gradient-to-r from-purple-500/5 via-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl -z-10" />
+          {isDragging && (
+            <div className="absolute inset-0 pointer-events-none rounded-[22px] overflow-hidden">
+              <motion.div 
+                animate={{ y: ['0%', '100%', '0%'] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
+                className="w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_10px_#06B6D4]"
+              />
+            </div>
+          )}
 
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 border border-white/5 text-[#94A3B8] transition-colors group-hover:text-cyan-400 group-hover:border-cyan-500/30">
-            <Upload className="h-6 w-6 group-hover:scale-110 transition-transform" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-black/40 border border-white/10 text-[#94A3B8] transition-all group-hover:text-cyan-400 group-hover:border-cyan-500/40 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+            <Upload className="h-6 w-6" />
           </div>
 
-          <h4 className="mt-4 text-base font-bold text-white">
+          <h4 className="mt-5 text-lg font-bold text-white tracking-tight group-hover:text-cyan-300 transition-colors">
             Drag & drop images here to construct album
           </h4>
-          <p className="mt-2 text-xs text-[#94A3B8]">
-            Or <span className="text-cyan-400 group-hover:underline">browse files</span> from your gallery (Supports JPG, JPEG, and PNG)
+          <p className="mt-2 text-sm text-[#94A3B8]">
+            Or <span className="text-cyan-400 font-semibold group-hover:underline">browse files</span> from your gallery (Supports JPG, JPEG, and PNG)
           </p>
-          <span className="mt-3 text-[10px] uppercase font-mono tracking-wider text-slate-500 bg-white/5 py-1 px-2.5 rounded">
-            Highly optimized for mobile camera frames
-          </span>
+          <div className="mt-4 flex items-center gap-2">
+            <span className="text-[10px] uppercase font-mono tracking-wider text-cyan-300 bg-cyan-950/40 border border-cyan-500/20 py-1 px-3 rounded-md">
+              Secure RAM Compiles
+            </span>
+            <span className="text-[10px] uppercase font-mono tracking-wider text-purple-300 bg-purple-950/40 border border-purple-500/20 py-1 px-3 rounded-md">
+              Mobile Friendly
+            </span>
+          </div>
         </div>
 
         {/* Images Thumbnails Grid */}
         {images.length > 0 && (
-          <div className="mt-8 space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="mt-10 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/5 pb-2">
               <span className="text-xs font-mono tracking-wider text-[#94A3B8] uppercase">
                 Pages Stream ({images.length} images queued)
               </span>
@@ -492,96 +505,104 @@ export default function JpgToPdfTool() {
               </span>
             </div>
 
-            {/* Grid display layout */}
+            {/* Grid display layout with beautiful floaters */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {images.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="group/thumb relative aspect-[3/4] bg-slate-950/50 rounded-xl overflow-hidden border border-white/5 hover:border-cyan-500/30 transition-all duration-300 flex flex-col justify-between"
-                >
-                  {/* Thumbnail Image display */}
-                  <img
-                    src={item.objectUrl}
-                    alt={item.name}
-                    referrerPolicy="no-referrer"
-                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover/thumb:opacity-75 transition-opacity"
-                  />
+              <AnimatePresence initial={false}>
+                {images.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, scale: 0.9, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                    transition={{ type: 'spring', stiffness: 450, damping: 28 }}
+                    className="group/thumb relative aspect-[3/4] bg-slate-950/60 rounded-2xl overflow-hidden border border-white/5 hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between shadow-md"
+                  >
+                    {/* Thumbnail Image display */}
+                    <img
+                      src={item.objectUrl}
+                      alt={item.name}
+                      referrerPolicy="no-referrer"
+                      className="absolute inset-0 w-full h-full object-cover opacity-65 group-hover/thumb:opacity-85 transition-opacity"
+                    />
 
-                  {/* Top badge counter overlay */}
-                  <div className="absolute top-2 left-2 z-10 font-mono text-[10px] bg-black/70 border border-white/10 text-white rounded px-1.5 py-0.5">
-                    Pg {index + 1}
-                  </div>
+                    {/* Top badge counter overlay */}
+                    <div className="absolute top-2.5 left-2.5 z-10 font-mono text-[10px] font-black bg-black/85 border border-white/10 text-cyan-400 rounded px-2 py-0.5 shadow-sm">
+                      PG {index + 1}
+                    </div>
 
-                  {/* Action overlays visible on hover */}
-                  <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover/thumb:opacity-100 transition-opacity pointer-events-none" />
+                    {/* Action overlays visible on hover */}
+                    <div className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover/thumb:opacity-100 transition-opacity pointer-events-none" />
 
-                  {/* Floating Action Bars */}
-                  <div className="z-10 absolute bottom-2 inset-x-2 flex items-center justify-between gap-1.5 opacity-90 group-hover/thumb:opacity-100 transition-opacity">
-                    <div className="flex gap-1">
-                      {/* Move Left */}
+                    {/* Floating Action Bars */}
+                    <div className="z-10 absolute bottom-2.5 inset-x-2.5 flex items-center justify-between gap-1.5 opacity-90 sm:opacity-0 group-hover/thumb:opacity-100 transition-opacity">
+                      <div className="flex gap-1 bg-black/60 p-0.5 rounded-lg border border-white/5">
+                        {/* Move Left */}
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); handleMoveLeft(index); }}
+                          disabled={index === 0}
+                          className="h-7.5 w-7.5 flex items-center justify-center bg-transparent hover:bg-white/5 rounded text-[#94A3B8] hover:text-white disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer"
+                          title="Move Page Back"
+                        >
+                          <ArrowLeft className="h-4 w-4" />
+                        </button>
+
+                        {/* Move Right */}
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); handleMoveRight(index); }}
+                          disabled={index === images.length - 1}
+                          className="h-7.5 w-7.5 flex items-center justify-center bg-transparent hover:bg-white/5 rounded text-[#94A3B8] hover:text-white disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer"
+                          title="Move Page Forward"
+                        >
+                          <ArrowRight className="h-4 w-4" />
+                        </button>
+                      </div>
+
+                      {/* Trash */}
                       <button
                         type="button"
-                        onClick={() => handleMoveLeft(index)}
-                        disabled={index === 0}
-                        className="h-7 w-7 flex items-center justify-center bg-black/80 border border-white/10 hover:border-white/25 rounded text-[#94A3B8] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition"
-                        title="Move Page Back"
+                        onClick={(e) => { e.stopPropagation(); handleDeleteImage(item.id, item.objectUrl); }}
+                        className="h-7.5 w-7.5 flex items-center justify-center bg-rose-950/90 border border-rose-500/20 rounded-lg text-rose-300 hover:bg-rose-900/90 transition cursor-pointer shadow-lg"
+                        title="Remove Image"
                       >
-                        <ArrowLeft className="h-3.5 w-3.5" />
-                      </button>
-
-                      {/* Move Right */}
-                      <button
-                        type="button"
-                        onClick={() => handleMoveRight(index)}
-                        disabled={index === images.length - 1}
-                        className="h-7 w-7 flex items-center justify-center bg-black/80 border border-white/10 hover:border-white/25 rounded text-[#94A3B8] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition"
-                        title="Move Page Forward"
-                      >
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
 
-                    {/* Trash */}
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteImage(item.id, item.objectUrl)}
-                      className="h-7 w-7 flex items-center justify-center bg-rose-950/90 border border-rose-500/20 rounded text-rose-300 hover:bg-rose-900 transition cursor-pointer"
-                      title="Remove Image"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-
-                  {/* Simple text info element */}
-                  <div className="absolute bottom-2 left-2 right-2 truncate text-[9px] font-mono text-white/50 bg-black/60 px-1 rounded pointer-events-none group-hover/thumb:hidden">
-                    {formatBytes(item.size)}
-                  </div>
-                </div>
-              ))}
+                    {/* Simple text info element */}
+                    <div className="absolute bottom-2.5 left-2.5 right-2.5 truncate text-[9px] font-mono text-white/70 bg-black/70 py-0.5 px-1.5 rounded pointer-events-none group-hover/thumb:hidden border border-white/5">
+                      {formatBytes(item.size)}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
 
             {/* Compile button action block */}
             <div className="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-xs text-[#94A3B8]/80 text-center sm:text-left">
-                Conversion renders instantly. Config choice: <span className="text-cyan-400 capitalize font-medium">{config.pageSize}</span>, page aspect fits.
+              <div className="text-xs text-[#94A3B8]/80 text-center sm:text-left leading-relaxed">
+                Conversion renders instantly inside memory threads with standard aspect sizing.
               </div>
 
               <button
                 onClick={handleCompileImagesToPdf}
                 disabled={images.length === 0 || isProcessing}
-                className="w-full sm:w-auto px-6 py-3 cursor-pointer rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 font-semibold text-white tracking-wide transition-all select-none hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:brightness-110 active:scale-95 disabled:scale-100 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-2"
+                className="w-full sm:w-auto overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-500 p-[1.5px] font-sans text-sm font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] active:scale-95 disabled:scale-100 disabled:opacity-30 disabled:pointer-events-none cursor-pointer flex justify-center items-center"
               >
-                {isProcessing ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 animate-spin text-cyan-200" />
-                    Baking Vector Sheets...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4 text-purple-300 animate-pulse" />
-                    Synthesize PDF Document
-                  </>
-                )}
+                <span className="w-full h-full flex items-center justify-center gap-2 bg-[#0C1123]/95 hover:bg-transparent px-8 py-3.5 rounded-[15px] transition-colors duration-200">
+                  {isProcessing ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin text-cyan-300" />
+                      Synthesizing Assets...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 text-purple-300 animate-pulse" />
+                      Synthesize PDF Document
+                    </>
+                  )}
+                </span>
               </button>
             </div>
           </div>

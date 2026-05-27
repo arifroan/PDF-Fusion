@@ -29,6 +29,72 @@
 /* Smooth scrolling bounds */
 html {
   scroll-behavior: smooth;
+  background-color: #0B1020;
+}
+
+/* Keyframes for futuristic glow effect transitions */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.3;
+    filter: drop-shadow(0 0 15px rgba(124, 58, 237, 0.4));
+  }
+  50% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 35px rgba(6, 182, 212, 0.6));
+  }
+}
+
+@keyframes laserHorizontal {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes gridMovement {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
+}
+
+/* Premium gradient borders */
+.animated-gradient-border {
+  position: relative;
+  background: rgba(18, 26, 47, 0.7);
+  background-clip: padding-box;
+  border: 1px solid transparent;
+}
+
+.animated-gradient-border::after {
+  content: '';
+  position: absolute;
+  top: -1px; bottom: -1px; left: -1px; right: -1px;
+  background: linear-gradient(to right, #7C3AED, #06B6D4);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.animated-gradient-border:hover::after {
+  opacity: 1;
+}
+
+.cyber-glow-active {
+  animation: pulseGlow 4s infinite ease-in-out;
+}
+
+.laser-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.laser-line::before {
+  content: '';
+  position: absolute;
+  height: 1px;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg, transparent, #06B6D4, #7C3AED, transparent);
+  animation: laserHorizontal 3s infinite linear;
 }
 
 /* Smooth spin for slow spin CPU graphics */
