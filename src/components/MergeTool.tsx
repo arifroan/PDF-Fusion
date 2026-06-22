@@ -6,10 +6,12 @@ import {
 } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
 import { PDFFileItem } from '../types';
+import PdfPreviewModal from './PdfPreviewModal';
 
 export default function MergeTool() {
   const [files, setFiles] = useState<PDFFileItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [alert, setAlert] = useState<{ type: 'success' | 'error' | null; message: string }>({
     type: null,
     message: '',
@@ -182,6 +184,19 @@ export default function MergeTool() {
   const handleReset = () => {
     setFiles([]);
     setAlert({ type: null, message: '' });
+  };
+
+  // Open preview dialog first
+  const handleOpenPreview = () => {
+    const activeFiles = files.filter(f => f.status === 'success');
+    if (activeFiles.length < 2) {
+      setAlert({
+        type: 'error',
+        message: 'Please provide at least 2 valid PDFs to combine.',
+      });
+      return;
+    }
+    setIsPreviewModalOpen(true);
   };
 
   // CORE: Merging files client side
@@ -497,7 +512,7 @@ export default function MergeTool() {
               </span>
 
               <button
-                onClick={handleMergePdfStream}
+                onClick={handleOpenPreview}
                 disabled={files.filter(f => f.status === 'success').length < 2 || isProcessing}
                 className="w-full sm:w-auto overflow-hidden rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 p-[1.5px] font-sans text-sm font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] active:scale-95 disabled:scale-100 disabled:opacity-30 disabled:pointer-events-none cursor-pointer flex justify-center items-center"
               >
@@ -519,6 +534,16 @@ export default function MergeTool() {
           </div>
         )}
       </div>
+
+      {/* PDF Verification Preview Mode Modal overlay */}
+      <PdfPreviewModal
+        isOpen={isPreviewModalOpen}
+        onClose={() => setIsPreviewModalOpen(false)}
+        mode="merge"
+        mergeFiles={files}
+        onUpdateMergeFiles={setFiles}
+        onConfirmMerge={handleMergePdfStream}
+      />
     </section>
   );
 }

@@ -5,6 +5,7 @@ import {
   Sparkles, RefreshCw, FileImage, SlidersHorizontal, Download, ArrowDown, FileOutput, ArrowRight,
   CaseSensitive
 } from 'lucide-react';
+import PdfPreviewModal from './PdfPreviewModal';
 
 const PDFJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
 const PDFJS_WORKER_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
@@ -23,6 +24,7 @@ export default function PdfToJpgTool() {
   const [pageCount, setPageCount] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isCdnReady, setIsCdnReady] = useState(false);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   
   // Convert config
   const [format, setFormat] = useState<ImageFormat>('image/png');
@@ -236,7 +238,7 @@ export default function PdfToJpgTool() {
     return pagesList.sort((a, b) => a - b);
   };
 
-  const handleExportImages = async () => {
+  const handleExportImages = async (pagesToConvert?: number[]) => {
     if (!file) return;
     const anyWin = window as any;
     if (!anyWin.pdfjsLib) return;
@@ -256,7 +258,9 @@ export default function PdfToJpgTool() {
 
       // Decide target pages
       let targetPages: number[] = [];
-      if (selectedPagesOnly) {
+      if (pagesToConvert && pagesToConvert.length > 0) {
+        targetPages = pagesToConvert;
+      } else if (selectedPagesOnly) {
         targetPages = parsePageNumbers(pagesInput, pdf.numPages);
         if (targetPages.length === 0) {
           throw new Error('No valid target pages matched your criteria.');
@@ -821,7 +825,7 @@ export default function PdfToJpgTool() {
               <div className="flex justify-end pt-4">
                 <button
                   type="button"
-                  onClick={handleExportImages}
+                  onClick={() => setIsPreviewModalOpen(true)}
                   disabled={isProcessing || !isCdnReady}
                   className="w-full sm:w-auto overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-500 p-[1.5px] font-sans text-sm font-bold tracking-wide text-white transition hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] active:scale-95 disabled:scale-100 disabled:opacity-45 cursor-pointer"
                 >
@@ -844,6 +848,15 @@ export default function PdfToJpgTool() {
           </div>
         )}
       </div>
+
+      {/* PDF Visual Page Selector Modal */}
+      <PdfPreviewModal
+        isOpen={isPreviewModalOpen}
+        onClose={() => setIsPreviewModalOpen(false)}
+        mode="pdf-to-jpg"
+        pdfFile={file}
+        onConfirmConversion={handleExportImages}
+      />
     </section>
   );
 }
