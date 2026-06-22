@@ -86,11 +86,11 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
     {
       id: 'watermark',
       title: 'Inject Watermark',
-      description: 'Overlay custom texts or responsive logos onto PDF files with transparency scales.',
-      badge: 'COMING SOON',
+      description: 'Overlay custom texts onto PDF files with transparency, custom colors, sizing, and position templates.',
+      badge: 'ACTIVE',
       icon: Type,
-      color: 'slate',
-      latency: 'v2 Core Queue',
+      color: 'cyan',
+      latency: 'Instant Layering',
     },
   ];
 

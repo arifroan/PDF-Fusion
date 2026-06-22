@@ -89,6 +89,14 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
             >
               Unlock PDF
             </button>
+            <button
+              onClick={() => handleNavClick('watermark')}
+              className={`text-sm font-medium transition-colors duration-150 hover:text-cyan-400 ${
+                activeTool === 'watermark' ? 'text-cyan-400' : 'text-[#94A3B8]'
+              }`}
+            >
+              Watermark PDF
+            </button>
             <a
               href="#features-section"
               className="text-sm font-medium text-[#94A3B8] transition-colors duration-150 hover:text-white"
@@ -172,6 +180,12 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
               className="block w-full text-left rounded-lg px-3 py-2.5 text-base font-medium text-purple-400 hover:bg-white/5"
             >
               Unlock PDF
+            </button>
+            <button
+              onClick={() => handleNavClick('watermark')}
+              className="block w-full text-left rounded-lg px-3 py-2.5 text-base font-medium text-cyan-400 hover:bg-white/5"
+            >
+              Watermark PDF
             </button>
             <a
               href="#features-section"

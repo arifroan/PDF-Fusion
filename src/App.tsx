@@ -12,11 +12,12 @@ import SplitTool from './components/SplitTool';
 import PdfToJpgTool from './components/PdfToJpgTool';
 import EditMetadataTool from './components/EditMetadataTool';
 import UnlockPdfTool from './components/UnlockPdfTool';
+import WatermarkTool from './components/WatermarkTool';
 import Features from './components/Features';
 import Footer from './components/Footer';
 import CinematicIntro from './components/CinematicIntro';
 import { ToolId } from './types';
-import { Sparkles, ArrowLeft, History, Cpu, FileCheck, Minimize2, Scissors, FileImage, Lock } from 'lucide-react';
+import { Sparkles, ArrowLeft, History, Cpu, FileCheck, Minimize2, Scissors, FileImage, Lock, Type } from 'lucide-react';
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(() => {
@@ -110,6 +111,8 @@ export default function App() {
                         ? 'Edit Metadata Mode'
                         : activeTool === 'unlock'
                         ? 'Unlock Protected PDF Mode'
+                        : activeTool === 'watermark'
+                        ? 'Watermark Injector Mode'
                         : 'Optimize & Compress Mode'}
                     </h2>
                   </div>
@@ -213,6 +216,17 @@ export default function App() {
                   </div>
 
                   <UnlockPdfTool />
+
+                  {/* Divider title */}
+                  <div className="relative flex py-5 items-center">
+                    <div className="flex-grow border-t border-white/5"></div>
+                    <span className="flex-shrink mx-4 text-xs font-mono text-cyan-400 uppercase tracking-widest flex items-center gap-2">
+                      <Type className="h-3 w-3" /> Live Terminal: Inject Watermark Layers
+                    </span>
+                    <div className="flex-grow border-t border-white/5"></div>
+                  </div>
+
+                  <WatermarkTool />
                 </div>
               </>
             ) : activeTool === 'merge' ? (
@@ -227,6 +241,8 @@ export default function App() {
               <EditMetadataTool />
             ) : activeTool === 'unlock' ? (
               <UnlockPdfTool />
+            ) : activeTool === 'watermark' ? (
+              <WatermarkTool />
             ) : (
               <CompressTool />
             )}
