@@ -13,11 +13,12 @@ import PdfToJpgTool from './components/PdfToJpgTool';
 import EditMetadataTool from './components/EditMetadataTool';
 import UnlockPdfTool from './components/UnlockPdfTool';
 import WatermarkTool from './components/WatermarkTool';
+import BatchProcessingTool from './components/BatchProcessingTool';
 import Features from './components/Features';
 import Footer from './components/Footer';
 import CinematicIntro from './components/CinematicIntro';
 import { ToolId } from './types';
-import { Sparkles, ArrowLeft, History, Cpu, FileCheck, Minimize2, Scissors, FileImage, Lock, Type } from 'lucide-react';
+import { Sparkles, ArrowLeft, History, Cpu, FileCheck, Minimize2, Scissors, FileImage, Lock, Type, FolderArchive } from 'lucide-react';
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(() => {
@@ -27,6 +28,17 @@ export default function App() {
     return true;
   });
   const [activeTool, setActiveTool] = useState<ToolId>('all');
+  const [quantumTheme, setQuantumTheme] = useState<'purple' | 'emerald' | 'amber' | 'blue'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('pdfusion-quantum-theme') as any) || 'purple';
+    }
+    return 'purple';
+  });
+
+  const handleSetQuantumTheme = (theme: 'purple' | 'emerald' | 'amber' | 'blue') => {
+    localStorage.setItem('pdfusion-quantum-theme', theme);
+    setQuantumTheme(theme);
+  };
 
   const handleSelectTool = (tool: ToolId) => {
     setActiveTool(tool);
@@ -57,7 +69,7 @@ export default function App() {
   };
 
   return (
-    <div id="app-root-container" className="min-h-screen text-white font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div id="app-root-container" className={`min-h-screen text-white font-sans quantum-${quantumTheme}`}>
       {/* Cinematic Opening Intro on system boot sequence */}
       {showIntro && <CinematicIntro onComplete={handleIntroComplete} />}
 
@@ -65,7 +77,12 @@ export default function App() {
       <FuturisticBackground />
 
       {/* Global Navbar */}
-      <Navbar onSelectTool={handleSelectTool} activeTool={activeTool} />
+      <Navbar 
+        onSelectTool={handleSelectTool} 
+        activeTool={activeTool} 
+        quantumTheme={quantumTheme} 
+        onChangeTheme={handleSetQuantumTheme} 
+      />
 
       {/* Global Sandboxed Processing & Loading Progress Tracker */}
       <ActiveProgressBar />
@@ -113,6 +130,8 @@ export default function App() {
                         ? 'Unlock Protected PDF Mode'
                         : activeTool === 'watermark'
                         ? 'Watermark Injector Mode'
+                        : activeTool === 'batch'
+                        ? 'Unified Batch Processor Mode'
                         : 'Optimize & Compress Mode'}
                     </h2>
                   </div>
@@ -227,6 +246,17 @@ export default function App() {
                   </div>
 
                   <WatermarkTool />
+
+                  {/* Divider title */}
+                  <div className="relative flex py-5 items-center">
+                    <div className="flex-grow border-t border-white/5"></div>
+                    <span className="flex-shrink mx-4 text-xs font-mono text-violet-400 uppercase tracking-widest flex items-center gap-2">
+                      <FolderArchive className="h-3.5 w-3.5" /> Live Terminal: Batch Processing Engine
+                    </span>
+                    <div className="flex-grow border-t border-white/5"></div>
+                  </div>
+
+                  <BatchProcessingTool />
                 </div>
               </>
             ) : activeTool === 'merge' ? (
@@ -243,6 +273,8 @@ export default function App() {
               <UnlockPdfTool />
             ) : activeTool === 'watermark' ? (
               <WatermarkTool />
+            ) : activeTool === 'batch' ? (
+              <BatchProcessingTool />
             ) : (
               <CompressTool />
             )}

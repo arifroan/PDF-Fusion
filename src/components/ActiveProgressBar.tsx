@@ -65,15 +65,11 @@ export default function ActiveProgressBar() {
   };
 
   const getThemeColor = () => {
-    if (state.type === 'merge') return 'from-[#7C3AED] to-purple-500';
-    if (state.type === 'convert') return 'from-cyan-500 to-emerald-400';
-    return 'from-purple-500 to-[#06B6D4]';
+    return 'from-quantum to-quantum-highlight';
   };
 
   const getAccentBgClass = () => {
-    if (state.type === 'merge') return 'border-purple-500/20 bg-purple-950/10 text-purple-300';
-    if (state.type === 'convert') return 'border-cyan-500/20 bg-cyan-950/10 text-cyan-300';
-    return 'border-emerald-500/20 bg-emerald-950/10 text-emerald-300';
+    return 'border-quantum-20 bg-quantum-10 text-quantum';
   };
 
   return (
@@ -104,7 +100,7 @@ export default function ActiveProgressBar() {
             </div>
 
             <div className="flex items-center gap-1.5 shrink-0 pl-2">
-              <span className="font-mono text-sm font-black text-cyan-400 bg-cyan-950/40 px-2.5 py-1 rounded-xl border border-cyan-500/20">
+              <span className="font-mono text-sm font-black text-quantum bg-quantum-10 px-2.5 py-1 rounded-xl border border-quantum-20">
                 {state.progress}%
               </span>
             </div>
@@ -128,7 +124,7 @@ export default function ActiveProgressBar() {
                 <span className="text-slate-400">Memory log:</span>
                 <span className="text-[#94A3B8] truncate">{logs[logs.length - 1]}</span>
               </div>
-              <div className="text-cyan-400/80 uppercase tracking-widest text-[9px] font-black shrink-0">
+              <div className="text-quantum-highlight uppercase tracking-widest text-[9px] font-black shrink-0">
                 Local RAM Thread
               </div>
             </div>

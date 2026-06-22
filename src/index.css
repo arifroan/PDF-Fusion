@@ -4,6 +4,98 @@
 @theme {
   --font-sans: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-quantum: var(--quantum-color);
+  --color-quantum-glow: var(--quantum-glow);
+  --color-quantum-highlight: var(--quantum-highlight);
+}
+
+/* CSS variable states for the Quantum Accents */
+:root, .quantum-purple {
+  --quantum-color: #a855f7; /* Violet/Purple */
+  --quantum-color-rgb: 168, 85, 247;
+  --quantum-glow: rgba(168, 85, 247, 0.15);
+  --quantum-highlightHex: #06b6d4; /* Cyan */
+  --quantum-highlight-rgb: 6, 182, 212;
+  --quantum-highlight: #06b6d4;
+}
+
+.quantum-emerald {
+  --quantum-color: #10b981; /* Emerald/Green */
+  --quantum-color-rgb: 16, 185, 129;
+  --quantum-glow: rgba(16, 185, 129, 0.15);
+  --quantum-highlightHex: #22d3ee; /* Cyan */
+  --quantum-highlight-rgb: 34, 211, 238;
+  --quantum-highlight: #22d3ee;
+}
+
+.quantum-amber {
+  --quantum-color: #f59e0b; /* Amber/Orange */
+  --quantum-color-rgb: 245, 158, 11;
+  --quantum-glow: rgba(245, 158, 11, 0.15);
+  --quantum-highlightHex: #f43f5e; /* Rose-red */
+  --quantum-highlight-rgb: 244, 63, 94;
+  --quantum-highlight: #f43f5e;
+}
+
+.quantum-blue {
+  --quantum-color: #3b82f6; /* Electric Blue */
+  --quantum-color-rgb: 59, 130, 246;
+  --quantum-glow: rgba(59, 130, 246, 0.15);
+  --quantum-highlightHex: #a855f7; /* Purple */
+  --quantum-highlight-rgb: 168, 85, 247;
+  --quantum-highlight: #a855f7;
+}
+
+/* Custom CSS utilities for reliable dynamic branding */
+.text-quantum {
+  color: var(--quantum-color) !important;
+}
+.text-quantum-highlight {
+  color: var(--quantum-highlightHex) !important;
+}
+.border-quantum-20 {
+  border-color: rgba(var(--quantum-color-rgb), 0.2) !important;
+}
+.border-quantum-40 {
+  border-color: rgba(var(--quantum-color-rgb), 0.4) !important;
+}
+.border-quantum-highlight-20 {
+  border-color: rgba(var(--quantum-highlight-rgb), 0.2) !important;
+}
+.bg-quantum-10 {
+  background-color: rgba(var(--quantum-color-rgb), 0.1) !important;
+}
+.bg-quantum-20 {
+  background-color: rgba(var(--quantum-color-rgb), 0.2) !important;
+}
+.bg-quantum-highlight-10 {
+  background-color: rgba(var(--quantum-highlight-rgb), 0.1) !important;
+}
+.from-quantum {
+  --tw-gradient-from: var(--quantum-color) !important;
+  --tw-gradient-to: var(--quantum-color) !important;
+  --tw-gradient-stops: var(--quantum-color), var(--quantum-highlightHex) !important;
+}
+.to-quantum-highlight {
+  --tw-gradient-to: var(--quantum-highlightHex) !important;
+}
+
+/* Override selection color dynamically based on quantum mode */
+.quantum-purple *::selection {
+  background-color: rgba(168, 85, 247, 0.3) !important;
+  color: #f3e8ff !important;
+}
+.quantum-emerald *::selection {
+  background-color: rgba(16, 185, 129, 0.3) !important;
+  color: #ecfdf5 !important;
+}
+.quantum-amber *::selection {
+  background-color: rgba(245, 158, 11, 0.3) !important;
+  color: #fef3c7 !important;
+}
+.quantum-blue *::selection {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+  color: #eff6ff !important;
 }
 
 /* Smooth scrolling bounds and modern solid dark palette */

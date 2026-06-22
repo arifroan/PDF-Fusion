@@ -1,4 +1,4 @@
-export type ToolId = 'all' | 'merge' | 'jpg-to-pdf' | 'split' | 'compress' | 'pdf-to-jpg' | 'watermark' | 'metadata' | 'unlock';
+export type ToolId = 'all' | 'merge' | 'jpg-to-pdf' | 'split' | 'compress' | 'pdf-to-jpg' | 'watermark' | 'metadata' | 'unlock' | 'batch';
 
 export interface PDFFileItem {
   id: string;

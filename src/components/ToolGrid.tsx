@@ -1,6 +1,6 @@
 import { ElementType } from 'react';
 import { motion } from 'motion/react';
-import { Layers, Image, Scissors, Minimize2, FileImage, Type, Rocket, Ban, Tag, Unlock } from 'lucide-react';
+import { Layers, Image, Scissors, Minimize2, FileImage, Type, Rocket, Ban, Tag, Unlock, FolderArchive } from 'lucide-react';
 import { ToolId } from '../types';
 
 interface ToolGridProps {
@@ -91,6 +91,15 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
       icon: Type,
       color: 'cyan',
       latency: 'Instant Layering',
+    },
+    {
+      id: 'batch',
+      title: 'Unified Batch Processor',
+      description: 'Queue multiple PDF files to apply compression, watermarks, metadata, or unlock commands in bulk, then download as a single ZIP archive.',
+      badge: 'ACTIVE',
+      icon: FolderArchive,
+      color: 'purple',
+      latency: 'Instant Batch ZIP',
     },
   ];
 

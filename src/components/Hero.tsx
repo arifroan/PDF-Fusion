@@ -16,11 +16,11 @@ export default function Hero({ onSelectTool }: HeroProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-[#0F1424] px-4 py-2 text-xs text-cyan-300 mb-10 gpu-accel"
+          className="inline-flex items-center gap-2 rounded-full border border-quantum-20 bg-[#0F1424] px-4 py-2 text-xs text-quantum-highlight mb-10 gpu-accel"
         >
           <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-400 opacity-75"></span>
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-purple-500"></span>
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-quantum opacity-75"></span>
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-quantum"></span>
           </span>
           <span className="font-mono tracking-wide">Next-Gen v1.2 • Zero Server Transit Local Core</span>
         </motion.div>
@@ -35,7 +35,7 @@ export default function Hero({ onSelectTool }: HeroProps) {
           <span className="block bg-gradient-to-b from-white via-slate-100 to-[#94A3B8] bg-clip-text text-transparent">
             Synthesize & Refine
           </span>
-          <span className="block mt-3 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent font-extrabold pb-2">
+          <span className="block mt-3 bg-gradient-to-r from-quantum to-quantum-highlight bg-clip-text text-transparent font-extrabold pb-2">
             Your PDF Sandbox
           </span>
         </motion.h1>
@@ -49,7 +49,7 @@ export default function Hero({ onSelectTool }: HeroProps) {
         >
           Welcome to the absolute apex of client-side document processing. Split, bind, merge and 
           synthesize static PDF documents instantly within your device's browser memory—powered natively 
-          by <span className="text-cyan-400 font-semibold underline decoration-cyan-500/30 underline-offset-4">pdf-lib</span>.
+          by <span className="text-quantum font-semibold underline decoration-quantum-20 underline-offset-4">pdf-lib</span>.
         </motion.p>
 
         {/* Call to Actions with glowing border effects */}
