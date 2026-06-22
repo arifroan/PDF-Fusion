@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, ChangeEvent, DragEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Upload, FileText, CheckCircle, AlertTriangle, Trash2, 
-  Sparkles, RefreshCw, FileImage, SlidersHorizontal, Download, ArrowDown, FileOutput, ArrowRight
+  Sparkles, RefreshCw, FileImage, SlidersHorizontal, Download, ArrowDown, FileOutput, ArrowRight,
+  CaseSensitive
 } from 'lucide-react';
 
 const PDFJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
@@ -29,6 +30,13 @@ export default function PdfToJpgTool() {
   const [selectedPagesOnly, setSelectedPagesOnly] = useState<boolean>(false);
   const [pagesInput, setPagesInput] = useState<string>('1');
   
+  // Batch renaming states
+  const [useCustomNaming, setUseCustomNaming] = useState<boolean>(false);
+  const [customPrefix, setCustomPrefix] = useState<string>('slide');
+  const [namingSeparator, setNamingSeparator] = useState<string>('_'); // '_', '-', or ''
+  const [indexPadding, setIndexPadding] = useState<'none' | 'two-digit' | 'three-digit'>('two-digit');
+  const [sequenceStart, setSequenceStart] = useState<number>(1);
+  
   const [results, setResults] = useState<ExportedImage[]>([]);
   const [alert, setAlert] = useState<{ type: 'success' | 'error' | null; message: string }>({
     type: null,
@@ -38,6 +46,37 @@ export default function PdfToJpgTool() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounterRef = useRef(0);
   const [isDragging, setIsDragging] = useState(false);
+
+  const getOutputFilename = (pageNum: number, indexOnList: number, fileExtension: string, originalName: string) => {
+    if (!useCustomNaming) {
+      return `${originalName.replace(/\.[^/.]+$/, '')}_p${pageNum}.${fileExtension}`;
+    }
+    
+    const seqNum = sequenceStart + indexOnList;
+    let seqStr = seqNum.toString();
+    if (indexPadding === 'two-digit') {
+      seqStr = seqNum.toString().padStart(2, '0');
+    } else if (indexPadding === 'three-digit') {
+      seqStr = seqNum.toString().padStart(3, '0');
+    }
+    
+    const prefix = customPrefix.trim() || 'export';
+    return `${prefix}${namingSeparator}${seqStr}.${fileExtension}`;
+  };
+
+  const updateResultNames = () => {
+    if (results.length === 0 || !file) return;
+    const ext = format === 'image/png' ? 'png' : 'jpg';
+    setResults(prev => prev.map((item, idx) => ({
+      ...item,
+      name: getOutputFilename(item.pageNumber, idx, ext, file.name)
+    })));
+  };
+
+  // Run update whenever active options change
+  useEffect(() => {
+    updateResultNames();
+  }, [useCustomNaming, customPrefix, namingSeparator, indexPadding, sequenceStart, format]);
 
   // Load PDF.js dynamically
   useEffect(() => {
@@ -265,7 +304,7 @@ export default function PdfToJpgTool() {
         exported.push({
           pageNumber: pageNum,
           dataUrl,
-          name: `${file.name.replace('.pdf', '')}_p${pageNum}.${ext}`
+          name: getOutputFilename(pageNum, index, ext, file.name)
         });
       }
 
@@ -488,6 +527,147 @@ export default function PdfToJpgTool() {
               </span>
             </motion.div>
           )}
+
+          {/* Custom Batch Rename Segment */}
+          <div className="mt-5 pt-4 border-t border-white/5">
+            <button
+              type="button"
+              onClick={() => setUseCustomNaming(!useCustomNaming)}
+              className="flex items-center justify-between w-full text-left font-semibold text-slate-300 hover:text-white transition duration-150 py-1"
+            >
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
+                <CaseSensitive className="h-4 w-4 text-cyan-400 animate-pulse" />
+                <span>Custom Batch Renaming Sequence</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`text-[10px] px-2 py-0.5 rounded font-mono ${useCustomNaming ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/20' : 'bg-white/5 text-slate-500'}`}>
+                  {useCustomNaming ? 'ENABLED' : 'DISABLED'}
+                </span>
+                <span className="text-slate-500 text-xs">{useCustomNaming ? 'Hide' : 'Configure'} &rarr;</span>
+              </div>
+            </button>
+
+            <AnimatePresence>
+              {useCustomNaming && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-1">
+                    {/* Prefix Input */}
+                    <div>
+                      <label className="block text-[10px] font-mono font-bold text-slate-400 uppercase mb-2">Custom Prefix</label>
+                      <input
+                        type="text"
+                        value={customPrefix}
+                        onChange={(e) => setCustomPrefix(e.target.value)}
+                        placeholder="e.g. slide, invoice"
+                        className="w-full bg-[#090F1E] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono"
+                      />
+                    </div>
+
+                    {/* Separator Selection */}
+                    <div>
+                      <label className="block text-[10px] font-mono font-bold text-slate-400 uppercase mb-2">Separator</label>
+                      <div className="grid grid-cols-3 gap-1 bg-[#090F1E] p-1 rounded-xl border border-white/5">
+                        <button
+                          type="button"
+                          onClick={() => setNamingSeparator('_')}
+                          className={`py-1.5 text-[10px] font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                            namingSeparator === '_' ? 'bg-[#121A2F] text-cyan-300' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          "_"
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setNamingSeparator('-')}
+                          className={`py-1.5 text-[10px] font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                            namingSeparator === '-' ? 'bg-[#121A2F] text-cyan-300' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          "-"
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setNamingSeparator('')}
+                          className={`py-1.5 text-[10px] font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                            namingSeparator === '' ? 'bg-[#121A2F] text-cyan-300' : 'text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          None
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Padding Selection */}
+                    <div>
+                      <label className="block text-[10px] font-mono font-bold text-slate-400 uppercase mb-2">Number Padding</label>
+                      <div className="grid grid-cols-3 gap-1 bg-[#090F1E] p-1 rounded-xl border border-white/5">
+                        <button
+                          type="button"
+                          onClick={() => setIndexPadding('none')}
+                          className={`py-1.5 text-[10px] font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                            indexPadding === 'none' ? 'bg-[#121A2F] text-cyan-300' : 'text-slate-400 hover:text-white'
+                          }`}
+                          title="e.g. 1, 2, 3"
+                        >
+                          1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIndexPadding('two-digit')}
+                          className={`py-1.5 text-[10px] font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                            indexPadding === 'two-digit' ? 'bg-[#121A2F] text-cyan-300' : 'text-slate-400 hover:text-white'
+                          }`}
+                          title="e.g. 01, 02, 03"
+                        >
+                          01
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIndexPadding('three-digit')}
+                          className={`py-1.5 text-[10px] font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                            indexPadding === 'three-digit' ? 'bg-[#121A2F] text-cyan-300' : 'text-slate-400 hover:text-white'
+                          }`}
+                          title="e.g. 001, 002, 003"
+                        >
+                          001
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Sequence Start */}
+                    <div>
+                      <label className="block text-[10px] font-mono font-bold text-slate-400 uppercase mb-2">Starts At</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={sequenceStart}
+                        onChange={(e) => setSequenceStart(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                        className="w-full bg-[#090F1E] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Renaming Live Preview Banner */}
+                  <div className="mt-3.5 p-3 rounded-xl bg-cyan-950/20 border border-cyan-500/10 flex items-center justify-between text-xs">
+                    <span className="text-slate-400 font-medium">Naming Template Preview:</span>
+                    <span className="font-mono text-cyan-400 font-bold">
+                      {customPrefix.trim() || 'export'}{namingSeparator}{
+                        indexPadding === 'none' ? sequenceStart :
+                        indexPadding === 'two-digit' ? sequenceStart.toString().padStart(2, '0') :
+                        sequenceStart.toString().padStart(3, '0')
+                      }.{format === 'image/png' ? 'png' : 'jpg'}
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* File Select Dropzone area */}
@@ -606,6 +786,13 @@ export default function PdfToJpgTool() {
                           <span className="absolute bottom-2 left-2 rounded-lg bg-black/70 border border-white/10 px-2 py-1 text-[9px] font-mono font-bold text-slate-300">
                             P.{item.pageNumber}
                           </span>
+                        </div>
+
+                        {/* Dynamic Filename Display */}
+                        <div className="px-3 py-1.5 bg-black/30 border-b border-white/5">
+                          <p className="text-[10px] font-mono text-cyan-300 font-bold truncate tracking-wide" title={item.name}>
+                            {item.name}
+                          </p>
                         </div>
 
                         {/* File Action Controls footer */}

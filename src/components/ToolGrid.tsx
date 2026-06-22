@@ -1,6 +1,6 @@
 import { ElementType } from 'react';
 import { motion } from 'motion/react';
-import { Layers, Image, Scissors, Minimize2, FileImage, Type, Rocket, Ban } from 'lucide-react';
+import { Layers, Image, Scissors, Minimize2, FileImage, Type, Rocket, Ban, Tag, Unlock } from 'lucide-react';
 import { ToolId } from '../types';
 
 interface ToolGridProps {
@@ -66,6 +66,24 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
       latency: 'Dual-Canvas GPU',
     },
     {
+      id: 'metadata',
+      title: 'Edit PDF Metadata',
+      description: 'View and edit basic PDF metadata fields like Title, Author, and Subject before saving.',
+      badge: 'ACTIVE',
+      icon: Tag,
+      color: 'slate',
+      latency: 'Instant Inject',
+    },
+    {
+      id: 'unlock',
+      title: 'Unlock Protected PDF',
+      description: 'Remove encryption and password protection from secure PDFs using your password.',
+      badge: 'ACTIVE',
+      icon: Unlock,
+      color: 'purple',
+      latency: 'Instant Decryption',
+    },
+    {
       id: 'watermark',
       title: 'Inject Watermark',
       description: 'Overlay custom texts or responsive logos onto PDF files with transparency scales.',
@@ -79,20 +97,6 @@ export default function ToolGrid({ onSelectTool, activeTool }: ToolGridProps) {
   const handleCardClick = (tool: ToolCard) => {
     if (tool.badge !== 'ACTIVE') return;
     onSelectTool(tool.id);
-    
-    // Auto scroll directly to the tool with offset
-    setTimeout(() => {
-      const sectionId = 
-        tool.id === 'merge' ? 'merge-tool-section' : 
-        tool.id === 'jpg-to-pdf' ? 'jpg-pdf-tool-section' : 
-        tool.id === 'split' ? 'split-tool-section' :
-        tool.id === 'compress' ? 'compress-tool-section' :
-        'pdf-to-jpg-tool-section';
-      const el = document.getElementById(sectionId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 100);
   };
 
   return (

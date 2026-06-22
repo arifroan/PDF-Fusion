@@ -10,10 +10,6 @@ export default function Footer({ onSelectTool }: FooterProps) {
 
   const handleNavClick = (toolId: ToolId) => {
     onSelectTool(toolId);
-    
-    // Smooth scroll
-    const el = document.getElementById('tools-container');
-    el?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (

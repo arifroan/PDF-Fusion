@@ -60,14 +60,7 @@ export default function Hero({ onSelectTool }: HeroProps) {
           className="mt-12 flex flex-col sm:flex-row justify-center items-center gap-4"
         >
           <button
-            onClick={() => {
-              const el = document.getElementById('merge-tool-section');
-              if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              } else {
-                onSelectTool('merge');
-              }
-            }}
+            onClick={() => onSelectTool('merge')}
             className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] p-[1px] font-sans text-sm font-bold tracking-wide text-white transition-transform hover:scale-[1.01] active:scale-95 cursor-pointer flex justify-center items-center gpu-accel"
           >
             <span className="w-full h-full flex items-center justify-center gap-2 bg-[#0B1020] px-8 py-4 rounded-[11px] hover:bg-transparent transition-colors duration-150">
@@ -77,14 +70,7 @@ export default function Hero({ onSelectTool }: HeroProps) {
           </button>
           
           <button
-            onClick={() => {
-              const el = document.getElementById('jpg-pdf-tool-section');
-              if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              } else {
-                onSelectTool('jpg-to-pdf');
-              }
-            }}
+            onClick={() => onSelectTool('jpg-to-pdf')}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#121A2F] hover:bg-[#1C2640] hover:border-white/20 active:scale-95 px-8 py-4.5 text-sm font-bold text-white transition-all duration-150 cursor-pointer gpu-accel"
           >
             <Zap className="h-4 w-4 text-cyan-400" />

@@ -10,11 +10,13 @@ import JpgToPdfTool from './components/JpgToPdfTool';
 import CompressTool from './components/CompressTool';
 import SplitTool from './components/SplitTool';
 import PdfToJpgTool from './components/PdfToJpgTool';
+import EditMetadataTool from './components/EditMetadataTool';
+import UnlockPdfTool from './components/UnlockPdfTool';
 import Features from './components/Features';
 import Footer from './components/Footer';
 import CinematicIntro from './components/CinematicIntro';
 import { ToolId } from './types';
-import { Sparkles, ArrowLeft, History, Cpu, FileCheck, Minimize2, Scissors, FileImage } from 'lucide-react';
+import { Sparkles, ArrowLeft, History, Cpu, FileCheck, Minimize2, Scissors, FileImage, Lock } from 'lucide-react';
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(() => {
@@ -31,20 +33,20 @@ export default function App() {
     // If focusing a specific tool, smoothly scroll to the focused section after state renders
     if (tool !== 'all') {
       setTimeout(() => {
-        const targetId = 
-          tool === 'merge' ? 'merge-tool-section' : 
-          tool === 'jpg-to-pdf' ? 'jpg-pdf-tool-section' : 
-          tool === 'split' ? 'split-tool-section' :
-          tool === 'compress' ? 'compress-tool-section' :
-          'pdf-to-jpg-tool-section';
-        const element = document.getElementById(targetId);
-        element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
+        const element = document.getElementById('main-tools-content');
+        if (element) {
+          const headerOffset = 84; // 64px header + 20px padding margin
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 50);
     } else {
-      setTimeout(() => {
-        const element = document.getElementById('tools-container');
-        element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -71,7 +73,7 @@ export default function App() {
       {activeTool === 'all' && <Hero onSelectTool={handleSelectTool} />}
 
       {/* Interactive Tools Body */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-20 relative z-10">
+      <main id="main-tools-content" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-20 relative z-10">
         
         {/* Tool Filter Tabs & Core Grid */}
         <AnimatePresence mode="wait">
@@ -104,6 +106,10 @@ export default function App() {
                         ? 'Split PDF Structure Mode'
                         : activeTool === 'pdf-to-jpg'
                         ? 'PDF to Image Export Mode'
+                        : activeTool === 'metadata'
+                        ? 'Edit Metadata Mode'
+                        : activeTool === 'unlock'
+                        ? 'Unlock Protected PDF Mode'
                         : 'Optimize & Compress Mode'}
                     </h2>
                   </div>
@@ -185,6 +191,28 @@ export default function App() {
                   </div>
 
                   <CompressTool />
+
+                  {/* Divider title */}
+                  <div className="relative flex py-5 items-center">
+                    <div className="flex-grow border-t border-white/5"></div>
+                    <span className="flex-shrink mx-4 text-xs font-mono text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <FileCheck className="h-3 w-3" /> Live Terminal: Edit Metadata
+                    </span>
+                    <div className="flex-grow border-t border-white/5"></div>
+                  </div>
+
+                  <EditMetadataTool />
+
+                  {/* Divider title */}
+                  <div className="relative flex py-5 items-center">
+                    <div className="flex-grow border-t border-white/5"></div>
+                    <span className="flex-shrink mx-4 text-xs font-mono text-purple-400 uppercase tracking-widest flex items-center gap-2">
+                      <Lock className="h-3 w-3" /> Live Terminal: Unlock Protected PDF
+                    </span>
+                    <div className="flex-grow border-t border-white/5"></div>
+                  </div>
+
+                  <UnlockPdfTool />
                 </div>
               </>
             ) : activeTool === 'merge' ? (
@@ -195,6 +223,10 @@ export default function App() {
               <SplitTool />
             ) : activeTool === 'pdf-to-jpg' ? (
               <PdfToJpgTool />
+            ) : activeTool === 'metadata' ? (
+              <EditMetadataTool />
+            ) : activeTool === 'unlock' ? (
+              <UnlockPdfTool />
             ) : (
               <CompressTool />
             )}

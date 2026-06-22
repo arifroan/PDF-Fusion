@@ -13,12 +13,6 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
   const handleNavClick = (toolId: ToolId) => {
     onSelectTool(toolId);
     setIsOpen(false);
-    
-    // Scroll to the tool container or grid
-    if (toolId === 'all') {
-      const el = document.getElementById('tools-container');
-      el?.scrollIntoView({ behavior: 'smooth' });
-    }
   };
 
   return (
@@ -86,6 +80,14 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
               }`}
             >
               Compress PDF
+            </button>
+            <button
+              onClick={() => handleNavClick('unlock')}
+              className={`text-sm font-medium transition-colors duration-150 hover:text-purple-400 ${
+                activeTool === 'unlock' ? 'text-purple-400' : 'text-[#94A3B8]'
+              }`}
+            >
+              Unlock PDF
             </button>
             <a
               href="#features-section"
@@ -164,6 +166,12 @@ export default function Navbar({ onSelectTool, activeTool }: NavbarProps) {
               className="block w-full text-left rounded-lg px-3 py-2.5 text-base font-medium text-emerald-400 hover:bg-white/5"
             >
               Compress PDF
+            </button>
+            <button
+              onClick={() => handleNavClick('unlock')}
+              className="block w-full text-left rounded-lg px-3 py-2.5 text-base font-medium text-purple-400 hover:bg-white/5"
+            >
+              Unlock PDF
             </button>
             <a
               href="#features-section"
